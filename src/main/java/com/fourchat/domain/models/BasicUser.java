@@ -22,6 +22,6 @@ public class BasicUser implements User{
 
     @Override
     public void onMessageReceived(Chat chat, Message message) {
-        System.out.println("Chat id : " + chat.getId() + " " + message.getSender().getUserName() + " : " + message.getContent() );
+        System.out.println("Chat id : " + chat.getId() + " " + message.getSender().getUserName() + " : " + message.getContent() + "   | id :" + message.getId());
     }
 }

@@ -27,13 +27,13 @@ class TextMessageTest {
 
     @Test
     public void testGetId() {
-        textMessage.setId(1);
+        textMessage.setId(String.valueOf(1));
         assertEquals(1, textMessage.getId());
     }
 
     @Test
     public void testSetId() {
-        textMessage.setId(2);
+        textMessage.setId(String.valueOf(2));
         assertEquals(2, textMessage.getId());
     }
 

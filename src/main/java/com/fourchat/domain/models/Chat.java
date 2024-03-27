@@ -5,8 +5,8 @@ import java.util.List;
 
 public interface Chat {
 
-    public int getId();
-    public void setId(int id);
+    public String getId();
+    public void setId(String id);
     public List<User> getParticipants();
     public void addParticipant(User user);
     public void removeParticipant(User user);

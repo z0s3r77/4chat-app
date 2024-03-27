@@ -52,6 +52,14 @@ public class Application {
 		Message message8 = new TextMessage(user1, "Los niños bien, yo Genial! ", new Date());
 		chatService.sendMessage(user1, message8, user2);
 
+		System.out.println("-----------------------------Actualizar mensaje en un chat----------------------------");
+
+		chatService.updateMessageInChat(chat.getId(), "3", new TextMessage(user1, "como están los perros?*", new Date()));
+		Message message9 = new TextMessage(user2, "Los perros están bien, gracias por preguntar", new Date());
+		chatService.sendMessage(user2, message9, user1);
+
+		Chat chat2 = chatService.findChat(user1, user2);
+
 	}
 
 }

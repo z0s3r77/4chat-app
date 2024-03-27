@@ -6,7 +6,7 @@ import java.util.List;
 
 public class IndividualChat implements Chat{
 
-    private int id;
+    private String id;
     private List<User> participants;
     private List<Message> messages;
     private Date creationDate;
@@ -18,12 +18,12 @@ public class IndividualChat implements Chat{
     }
 
     @Override
-    public int getId() {
+    public String getId() {
         return id;
     }
 
     @Override
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -66,7 +66,7 @@ public class IndividualChat implements Chat{
         if (messages == null) {
             messages = new ArrayList<>();
         }
-        message.setId(messageCount++);
+        message.setId(String.valueOf(messageCount++));
         messages.add(message);
     }
 

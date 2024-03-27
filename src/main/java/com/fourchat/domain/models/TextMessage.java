@@ -4,9 +4,9 @@ import java.util.Date;
 
 public class TextMessage implements Message{
 
-    private int id;
+    private String id;
     private final User sender;
-    private final String content;
+    private String content;
     private final Date creationDate;
 
     public TextMessage(User sender, String content, Date creationDate) {
@@ -16,12 +16,12 @@ public class TextMessage implements Message{
     }
 
     @Override
-    public int getId() {
+    public String getId() {
         return id;
     }
 
     @Override
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -31,12 +31,16 @@ public class TextMessage implements Message{
     }
 
     @Override
-    public Object getContent() {
+    public String getContent() {
         return content;
     }
 
     @Override
     public Date getCreationDate() {
         return creationDate;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

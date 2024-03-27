@@ -8,6 +8,7 @@ import com.fourchat.domain.ports.ChatRepository;
 import com.fourchat.domain.ports.ChatService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ChatServiceImpl implements ChatService {
@@ -31,10 +32,11 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public void addParticipant(Chat chat, User participant) {
-        chat.getParticipants().add(participant);
-        chatRepository.save(chat);
+    public void addChatGroupParticipant(Chat groupChat, User groupAdmin, User participant) {
+
+
     }
+
 
     public Chat createIndividualChat(List<User> participants) {
 
@@ -54,6 +56,22 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    public void updateMessageInChat(String chatId, String messageId, Message messageUpdated) {
+
+        Optional<Chat> chatToUpdate = chatRepository.findById(chatId);
+        if (chatToUpdate.isPresent()) {
+            Chat chat = chatToUpdate.get();
+            List<Message> messages = chat.getMessages();
+            for (Message message : messages) {
+                if (message.getId().equals(messageUpdated.getId())) {
+                    message.setContent(messageUpdated.getContent());
+                    break;
+                }
+            }
+        }
+    }
+
+    @Override
     public void sendMessage(Chat chat, Message message) {
 
     }
@@ -64,5 +82,10 @@ public class ChatServiceImpl implements ChatService {
                 .filter(chat -> chat.getParticipants().contains(user1) && chat.getParticipants().contains(user2))
                 .findFirst()
                 .orElseGet(() -> createIndividualChat(List.of(user1, user2)));
+    }
+
+    @Override
+    public List<Chat> getUserChats(User user) {
+        return null;
     }
 }

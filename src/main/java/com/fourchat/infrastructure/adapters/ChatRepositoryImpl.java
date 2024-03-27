@@ -14,7 +14,7 @@ public class ChatRepositoryImpl implements ChatRepository {
     private final AtomicInteger idCounter = new AtomicInteger();
 
     @Override
-    public Optional<Chat> findById(int id) {
+    public Optional<Chat> findById(String id) {
         return chats.stream()
                 .filter(chat -> chat.getId() == id)
                 .findFirst();
@@ -22,12 +22,14 @@ public class ChatRepositoryImpl implements ChatRepository {
 
     @Override
     public Chat save(Chat chat) {
+
         Optional<Chat> existingChat = findById(chat.getId());
+
         if (existingChat.isPresent()) {
             existingChat.get().getMessages().addAll(chat.getMessages());
             return existingChat.get();
         } else {
-            chat.setId(idCounter.incrementAndGet());
+            chat.setId(String.valueOf(idCounter.incrementAndGet()));
             chats.add(chat);
             return chat;
         }

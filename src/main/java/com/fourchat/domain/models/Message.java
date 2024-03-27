@@ -4,10 +4,10 @@ import java.util.Date;
 
 public interface Message {
 
-    public int getId();
-    public void setId(int id);
+    public String getId();
+    public void setId(String id);
     public User getSender();
-    public Object getContent();
+    public String getContent();
     public Date getCreationDate();
-
+    void setContent(String content);
 }
