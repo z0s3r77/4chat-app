@@ -10,4 +10,8 @@ public interface Message {
     public String getContent();
     public Date getCreationDate();
     void setContent(String content);
+    public String toString();
+    public boolean updated();
+    public void setUpdated(boolean updated);
+
 }

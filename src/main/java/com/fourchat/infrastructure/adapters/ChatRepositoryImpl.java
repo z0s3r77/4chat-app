@@ -5,6 +5,7 @@ import com.fourchat.domain.ports.ChatRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -16,7 +17,7 @@ public class ChatRepositoryImpl implements ChatRepository {
     @Override
     public Optional<Chat> findById(String id) {
         return chats.stream()
-                .filter(chat -> chat.getId() == id)
+                .filter(chat -> Objects.equals(chat.getId(), id))
                 .findFirst();
     }
 
@@ -26,7 +27,6 @@ public class ChatRepositoryImpl implements ChatRepository {
         Optional<Chat> existingChat = findById(chat.getId());
 
         if (existingChat.isPresent()) {
-            existingChat.get().getMessages().addAll(chat.getMessages());
             return existingChat.get();
         } else {
             chat.setId(String.valueOf(idCounter.incrementAndGet()));
@@ -37,13 +37,13 @@ public class ChatRepositoryImpl implements ChatRepository {
 
     @Override
     public boolean delete(Chat chat) {
-        return chats.removeIf(c -> c.getId() == chat.getId());
+        return chats.removeIf(c -> Objects.equals(c.getId(), chat.getId()));
     }
 
     @Override
     public boolean update(Chat chat) {
         for (int i = 0; i < chats.size(); i++) {
-            if (chats.get(i).getId() == chat.getId()) {
+            if (Objects.equals(chats.get(i).getId(), chat.getId())) {
                 chats.set(i, chat);
                 return true;
             }

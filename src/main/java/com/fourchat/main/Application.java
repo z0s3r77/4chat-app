@@ -9,7 +9,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.Date;
-import java.util.List;
 
 @SpringBootApplication
 public class Application {
@@ -17,48 +16,39 @@ public class Application {
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 
-		User user1 = new BasicUser("Carlos", "user1@email.com");
-		User user2 = new BasicUser("Raul", "user2@email.com");
+		User carlos = new BasicUser("Carlos", "user1@email.com");
+		User raul = new BasicUser("Raul", "user2@email.com");
 
 		ChatRepository chatRepository = new ChatRepositoryImpl();
 		ChatService chatService = new ChatServiceImpl(chatRepository);
 
-		Message message = new TextMessage(user1, "Hello ma frien, Raul", new Date());
 
-		IndividualChat chat = (IndividualChat) chatService.sendMessage(user1, message, user2);
 
-		Message message2 = new TextMessage(user2, "Hello ma frien, Carlos, de vuelta", new Date());
-		Message message3 = new TextMessage(user1, "Como está la familia?", new Date());
-		Message message4 = new TextMessage(user1, "Y los niños?", new Date());
+		// Create a chat between Carlos and Raul
+		Message message1 = new TextMessage(carlos, "Hello Raul ", new Date());
 
-		chatService.sendMessage(user2, message2, user1);
-		chatService.sendMessage(user1, message3, user2);
-		chatService.sendMessage(user1, message4, user2);
+		chatService.sendMessage(carlos, message1, raul);
+		Chat carlosChat = chatService.getChats(carlos).getFirst();
+		int size = carlosChat.getMessages().size();
 
-		System.out.println("-----------------------------Un nuevo chat ----------------------------");
-		User user3 = new BasicUser("Sebas", "user3@email.com");
-		User user4 = new BasicUser("Alma", "user4@email.com");
+		Message message2 = new TextMessage(raul, "Hello Carlos", new Date());
+		chatService.sendMessage(raul, message2, carlos);
+		carlosChat = chatService.getChats(carlos).getFirst();
 
-		Message message5 = new TextMessage(user3, "Hola Alma", new Date());
-		Message message6 = new TextMessage(user3, "Como has estado?", new Date());
 
-		chatService.sendMessage(user3, message5, user4);
-		chatService.sendMessage(user3, message6, user4);
 
-		Message message7 = new TextMessage(user4, "Muy bien y tú?", new Date());
-		chatService.sendMessage(user4, message7, user3);
+		// Update the first message
+		Message messageToUpdate = carlosChat.getMessages().getFirst();
+		Message messageUpdated = new TextMessage(raul, "Hello Carlos, how are you?", new Date());
+		messageUpdated.setId(messageToUpdate.getId());
+		chatService.updateMessageInChat(carlosChat.getId(),  messageUpdated);
 
-		System.out.println("-----------------------------Respuesta anterior chat----------------------------");
-		Message message8 = new TextMessage(user1, "Los niños bien, yo Genial! ", new Date());
-		chatService.sendMessage(user1, message8, user2);
+		size = carlosChat.getMessages().size();
+		carlosChat = chatService.getChats(carlos).getFirst();
 
-		System.out.println("-----------------------------Actualizar mensaje en un chat----------------------------");
 
-		chatService.updateMessageInChat(chat.getId(), "3", new TextMessage(user1, "como están los perros?*", new Date()));
-		Message message9 = new TextMessage(user2, "Los perros están bien, gracias por preguntar", new Date());
-		chatService.sendMessage(user2, message9, user1);
 
-		Chat chat2 = chatService.findChat(user1, user2);
+
 
 	}
 

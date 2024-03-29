@@ -33,73 +33,73 @@ class IndividualChatTest {
         participants = new ArrayList<>();
         messages = new ArrayList<>();
         creationDate = new Date();
-        individualChat = new IndividualChat(participants);
+        individualChat = new IndividualChat(participants, new Date());
     }
 
     @Test
-    public void testGetParticipants() {
+    void testGetParticipants() {
         participants.add(user1);
         participants.add(user2);
         assertEquals(participants, individualChat.getParticipants());
     }
 
     @Test
-    public void testAddParticipant() {
+    void testAddParticipant() {
         individualChat.addParticipant(user1);
         assertTrue(individualChat.getParticipants().contains(user1));
     }
 
     @Test
-    public void testRemoveParticipant() {
+    void testRemoveParticipant() {
         individualChat.addParticipant(user1);
         individualChat.removeParticipant(user1);
         assertFalse(individualChat.getParticipants().contains(user1));
     }
 
     @Test
-    public void testGetCreationDate() {
+    void testGetCreationDate() {
         assertEquals(creationDate, individualChat.getCreationDate());
     }
 
     @Test
-    public void testGetMessages() {
+    void testGetMessages() {
         messages.add(message1);
         messages.add(message2);
         assertEquals(messages, individualChat.getMessages());
     }
 
     @Test
-    public void testGetLastMessage() {
+    void testGetLastMessage() {
         messages.add(message1);
         messages.add(message2);
         assertEquals(message2, individualChat.getLastMessage());
     }
 
     @Test
-    public void testAddMessage() {
+    void testAddMessage() {
         individualChat.addMessage(message1);
         assertTrue(individualChat.getMessages().contains(message1));
     }
 
     @Test
-    public void testRemoveMessage() {
+    void testRemoveMessage() {
         individualChat.addMessage(message1);
         individualChat.removeMessage(message1);
         assertFalse(individualChat.getMessages().contains(message1));
     }
 
     @Test
-    public void testUpdateMessage() {
+    void testUpdateMessage() {
         individualChat.addMessage(message1);
-        Mockito.when(message1.getId()).thenReturn(1);
+        Mockito.when(message1.getId()).thenReturn(String.valueOf(1));
         Message messageUpdate = Mockito.mock(Message.class);
-        Mockito.when(messageUpdate.getId()).thenReturn(1);
+        Mockito.when(messageUpdate.getId()).thenReturn(String.valueOf(1));
         individualChat.updateMessage(messageUpdate);
-        assertEquals(messageUpdate, individualChat.getMessages().get(0));
+        assertEquals(messageUpdate, individualChat.getMessages().getFirst());
     }
 
     @Test
-    public void testNotifyParticipants() {
+    void testNotifyParticipants() {
         individualChat.addParticipant(user1);
         individualChat.addParticipant(user2);
         individualChat.notifyParticipants(message1);

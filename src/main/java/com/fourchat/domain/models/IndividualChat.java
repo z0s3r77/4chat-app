@@ -3,6 +3,7 @@ package com.fourchat.domain.models;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class IndividualChat implements Chat{
 
@@ -12,8 +13,9 @@ public class IndividualChat implements Chat{
     private Date creationDate;
     private int messageCount = 0;
 
-    public IndividualChat( List<User> participants) {
+    public IndividualChat( List<User> participants, Date creationDate) {
 
+        this.creationDate = creationDate;
         this.participants = participants;
     }
 
@@ -63,9 +65,11 @@ public class IndividualChat implements Chat{
 
     @Override
     public void addMessage(Message message) {
+
         if (messages == null) {
             messages = new ArrayList<>();
         }
+
         message.setId(String.valueOf(messageCount++));
         messages.add(message);
     }
@@ -78,7 +82,7 @@ public class IndividualChat implements Chat{
     @Override
     public void updateMessage(Message messageUpdate) {
         for (int i = 0; i < messages.size(); i++) {
-            if (messages.get(i).getId() == messageUpdate.getId()) {
+            if (Objects.equals(messages.get(i).getId(), messageUpdate.getId())) {
                 messages.set(i, messageUpdate);
                 break;
             }

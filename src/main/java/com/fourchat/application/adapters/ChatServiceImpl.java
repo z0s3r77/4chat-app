@@ -6,7 +6,9 @@ import com.fourchat.domain.models.Message;
 import com.fourchat.domain.models.User;
 import com.fourchat.domain.ports.ChatRepository;
 import com.fourchat.domain.ports.ChatService;
+import java.util.Collections;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,38 +35,40 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public void addChatGroupParticipant(Chat groupChat, User groupAdmin, User participant) {
-
-
+        // Add the participant to the group chat
     }
 
 
     public Chat createIndividualChat(List<User> participants) {
 
-        Chat individualChat = new IndividualChat(participants);
+        Chat individualChat = new IndividualChat(participants, new Date());
         return chatRepository.save(individualChat);
     }
 
     @Override
     public Chat sendMessage(User sender, Message message, User receiver) {
+
+        // Search for an existing chat between the sender and the receiver
         Chat chat = findChat(sender, receiver);
-        if (chat == null) {
-            chat = createIndividualChat(List.of(sender, receiver));
-        }
+
         chat.addMessage(message);
         chat.notifyParticipants(message);
+
         return chatRepository.save(chat);
     }
 
     @Override
-    public void updateMessageInChat(String chatId, String messageId, Message messageUpdated) {
+    public void updateMessageInChat(String chatId, Message messageUpdated) {
 
         Optional<Chat> chatToUpdate = chatRepository.findById(chatId);
+
         if (chatToUpdate.isPresent()) {
             Chat chat = chatToUpdate.get();
             List<Message> messages = chat.getMessages();
             for (Message message : messages) {
                 if (message.getId().equals(messageUpdated.getId())) {
                     message.setContent(messageUpdated.getContent());
+                    message.setUpdated(true);
                     break;
                 }
             }
@@ -73,7 +77,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public void sendMessage(Chat chat, Message message) {
-
+        // Add the message to the chat
     }
 
     @Override
@@ -86,6 +90,6 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public List<Chat> getUserChats(User user) {
-        return null;
+        return Collections.emptyList();
     }
 }

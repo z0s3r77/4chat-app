@@ -13,4 +13,5 @@ public interface ChatRepository {
     boolean update(Chat chat);
     List<Chat> findAll();
 
+
 }
