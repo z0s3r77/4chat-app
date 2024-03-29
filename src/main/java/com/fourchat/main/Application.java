@@ -35,7 +35,8 @@ public class Application {
 		chatService.sendMessage(raul, message2, carlos);
 		carlosChat = chatService.getChats(carlos).getFirst();
 
-
+		Message message3 = new TextMessage(carlos, "I'm creating a chat app", new Date());
+		chatService.sendMessage(carlos, message3, raul);
 
 		// Update the first message
 		Message messageToUpdate = carlosChat.getMessages().getFirst();
@@ -48,6 +49,11 @@ public class Application {
 
 
 
+		// Remove message from chat
+		Message messageToDelete = carlosChat.getMessages().get(2);
+		boolean messageDeleted = chatService.removeMessageFromChat(carlosChat.getId(), messageToDelete.getId());
+		size = carlosChat.getMessages().size();
+		carlosChat = chatService.getChats(carlos).getFirst();
 
 
 	}

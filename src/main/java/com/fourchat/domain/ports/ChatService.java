@@ -17,5 +17,5 @@ public interface ChatService {
     Chat findChat(User user1, User user2);
     List<Chat> getUserChats(User user);
     Chat createIndividualChat(List<User> participants);
-
+    boolean removeMessageFromChat(String chatId, String messageId);
 }

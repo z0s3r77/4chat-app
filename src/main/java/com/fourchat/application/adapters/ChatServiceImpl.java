@@ -46,6 +46,22 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    public boolean removeMessageFromChat(String chatId, String messageId) {
+
+        Optional<Chat> chatToRemoveMessage = chatRepository.findById(chatId);
+
+        if (chatToRemoveMessage.isPresent()) {
+
+            Chat chat = chatToRemoveMessage.get();
+            List<Message> messages = chat.getMessages();
+            messages.removeIf(message -> message.getId().equals(messageId));
+            return chatRepository.update(chat);
+        }
+
+        return false;
+    }
+
+    @Override
     public Chat sendMessage(User sender, Message message, User receiver) {
 
         // Search for an existing chat between the sender and the receiver
@@ -59,20 +75,16 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public void updateMessageInChat(String chatId, Message messageUpdated) {
-
-        Optional<Chat> chatToUpdate = chatRepository.findById(chatId);
-
-        if (chatToUpdate.isPresent()) {
-            Chat chat = chatToUpdate.get();
-            List<Message> messages = chat.getMessages();
-            for (Message message : messages) {
-                if (message.getId().equals(messageUpdated.getId())) {
-                    message.setContent(messageUpdated.getContent());
-                    message.setUpdated(true);
-                    break;
-                }
-            }
-        }
+        chatRepository.findById(chatId).ifPresent(chat -> {
+            chat.getMessages().stream()
+                    .filter(message -> message.getId().equals(messageUpdated.getId()))
+                    .findFirst()
+                    .ifPresent(message -> {
+                        message.setContent(messageUpdated.getContent());
+                        message.setUpdated(true);
+                    });
+            chatRepository.update(chat);
+        });
     }
 
     @Override
