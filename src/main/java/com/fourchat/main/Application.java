@@ -8,6 +8,7 @@ import com.fourchat.infrastructure.adapters.ChatRepositoryImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.Arrays;
 import java.util.Date;
 
 @SpringBootApplication
@@ -25,6 +26,8 @@ public class Application {
 
 
 		// Create a chat between Carlos and Raul
+		System.out.println("------- Creating a chat between Carlos and Raul ----------------");
+		// Send Messages
 		Message message1 = new TextMessage(carlos, "Hello Raul ", new Date());
 
 		chatService.sendMessage(carlos, message1, raul);
@@ -48,12 +51,57 @@ public class Application {
 		carlosChat = chatService.getChats(carlos).getFirst();
 
 
-
 		// Remove message from chat
 		Message messageToDelete = carlosChat.getMessages().get(2);
 		boolean messageDeleted = chatService.removeMessageFromChat(carlosChat.getId(), messageToDelete.getId());
 		size = carlosChat.getMessages().size();
 		carlosChat = chatService.getChats(carlos).getFirst();
+
+
+		// Create another Chat
+		System.out.println("------- Creating another chat between Carlos and Malek ----------------");
+
+		User malek = new BasicUser("malek", "malek@gmail.com");
+		Message message4 = new TextMessage(carlos, "Hello Malek", new Date());
+		chatService.sendMessage(carlos, message4, malek);
+
+		carlosChat = chatService.getChats(carlos).get(1);
+		Chat malekChat = chatService.getChats(malek).getFirst();
+
+
+		// Create a group chat
+		System.out.println("------- Creating a group chat ----------------");
+
+		Chat groupChat = chatService.createGroupChat(Arrays.asList(carlos, raul, malek), Arrays.asList(carlos), "The Avengers", "The earth's protectors");
+		carlosChat = chatService.getChats(carlos).getLast();
+
+		// Send message to the group
+		System.out.println("------- Sending a message to the group ----------------");
+		Message messageGroup1 = new TextMessage(carlos, "Hello everyone, Im Carlos", new Date());
+		chatService.sendMessage(groupChat.getId(), messageGroup1);
+
+		Message messageGroup2 = new TextMessage(raul, "Hello everyone, Im Raul", new Date());
+		chatService.sendMessage(groupChat.getId(), messageGroup2);
+		carlosChat = chatService.getChats(carlos).getLast();
+
+		System.out.println("------- Updating a message in the group chat ----------------");
+		Message messageToUpdateGroup = carlosChat.getMessages().get(1);
+		Message messageUpdatedGroup = new TextMessage(raul, "Hello everyone, Im Raul and I'm updating my message", new Date());
+		messageUpdatedGroup.setId(messageToUpdateGroup.getId());
+		chatService.updateMessageInChat(groupChat.getId(),  messageUpdatedGroup);
+
+		size = carlosChat.getMessages().size();
+		carlosChat = chatService.getChats(carlos).getLast();
+
+		System.out.println("------- Removing a message from the group chat ----------------");
+
+		Message messageGroup3 = new TextMessage(raul, "This message will be removed", new Date());
+		chatService.sendMessage(groupChat.getId(), messageGroup3);
+		carlosChat = chatService.getChats(carlos).getLast();
+
+		Message messageToDeleteGroup = carlosChat.getMessages().getLast();
+		boolean messageDeletedGroup = chatService.removeMessageFromChat(groupChat.getId(), messageToDeleteGroup.getId());
+		size = carlosChat.getMessages().size();
 
 
 	}

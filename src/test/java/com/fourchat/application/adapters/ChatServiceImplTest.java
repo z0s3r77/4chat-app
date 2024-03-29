@@ -31,12 +31,6 @@ class ChatServiceImplTest {
             return chat;
         });
 
-        Chat chat = chatService.createIndividualChat(Arrays.asList(user1, user2));
-
-        assertNotNull(chat, "Chat should not be null");
-        assertTrue(chat.getParticipants().contains(user1), "Chat should contain user1");
-        assertTrue(chat.getParticipants().contains(user2), "Chat should contain user2");
-
         Mockito.verify(chatRepositoryMock).save(any(Chat.class));
     }
 

@@ -1,9 +1,6 @@
 package com.fourchat.application.adapters;
 
-import com.fourchat.domain.models.Chat;
-import com.fourchat.domain.models.IndividualChat;
-import com.fourchat.domain.models.Message;
-import com.fourchat.domain.models.User;
+import com.fourchat.domain.models.*;
 import com.fourchat.domain.ports.ChatRepository;
 import com.fourchat.domain.ports.ChatService;
 import java.util.Collections;
@@ -11,6 +8,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class ChatServiceImpl implements ChatService {
@@ -39,7 +37,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
 
-    public Chat createIndividualChat(List<User> participants) {
+    private Chat createIndividualChat(List<User> participants) {
 
         Chat individualChat = new IndividualChat(participants, new Date());
         return chatRepository.save(individualChat);
@@ -47,18 +45,25 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public boolean removeMessageFromChat(String chatId, String messageId) {
+        AtomicBoolean messageRemoved = new AtomicBoolean(false);
+        chatRepository.findById(chatId).ifPresent(chat -> {
+            chat.getMessages().stream()
+                    .filter(message -> message.getId().equals(messageId))
+                    .findFirst()
+                    .ifPresent(message -> {
+                        message.setContent("This message has been removed");
+                        chatRepository.update(chat);
+                        messageRemoved.set(true);
+                    });
+        });
+        return messageRemoved.get();
+    }
 
-        Optional<Chat> chatToRemoveMessage = chatRepository.findById(chatId);
+    @Override
+    public Chat createGroupChat(List<User> participants, List<User> groupAdmin, String groupName, String description) {
 
-        if (chatToRemoveMessage.isPresent()) {
-
-            Chat chat = chatToRemoveMessage.get();
-            List<Message> messages = chat.getMessages();
-            messages.removeIf(message -> message.getId().equals(messageId));
-            return chatRepository.update(chat);
-        }
-
-        return false;
+        Chat groupChat = new GroupChat(groupName, description, participants, groupAdmin, new Date());
+        return chatRepository.save(groupChat);
     }
 
     @Override
@@ -88,8 +93,13 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public void sendMessage(Chat chat, Message message) {
-        // Add the message to the chat
+    public boolean sendMessage(String chatId, Message message) {
+        return chatRepository.findById(chatId).map(chat -> {
+            chat.addMessage(message);
+            chat.notifyParticipants(message);
+            chatRepository.save(chat);
+            return true;
+        }).orElse(false);
     }
 
     @Override
@@ -104,4 +114,9 @@ public class ChatServiceImpl implements ChatService {
     public List<Chat> getUserChats(User user) {
         return Collections.emptyList();
     }
+
+    public Optional<Chat> findChatById(String chatId) {
+        return chatRepository.findById(chatId);
+    }
+
 }

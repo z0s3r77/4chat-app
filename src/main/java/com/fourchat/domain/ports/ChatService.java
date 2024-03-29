@@ -13,9 +13,10 @@ public interface ChatService {
     void addChatGroupParticipant(Chat groupChat, User groupAdmin, User participant);
     Chat sendMessage(User sender, Message message, User receiver);
     void updateMessageInChat(String chatId,  Message messageUpdated);
-    void sendMessage(Chat chat, Message message);
+    boolean sendMessage(String chatId, Message message);
     Chat findChat(User user1, User user2);
     List<Chat> getUserChats(User user);
-    Chat createIndividualChat(List<User> participants);
     boolean removeMessageFromChat(String chatId, String messageId);
+
+    Chat createGroupChat(List<User> participants, List<User> groupAdmin, String groupName, String description);
 }
