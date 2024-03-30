@@ -9,11 +9,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
+    private final Logger LOGGER = Logger.getLogger(ChatServiceImpl.class.getName());
 
     public ChatServiceImpl(ChatRepository chatRepository) {
         this.chatRepository = chatRepository;
@@ -64,6 +67,31 @@ public class ChatServiceImpl implements ChatService {
 
         Chat groupChat = new GroupChat(groupName, description, participants, groupAdmin, new Date());
         return chatRepository.save(groupChat);
+    }
+
+    @Override
+    public boolean updateGroupChatDescription(String chatId, String newDescription) {
+
+        return chatRepository.findById(chatId).map( chat -> {
+
+            GroupChat groupChat;
+
+            try{
+                 groupChat = (GroupChat) chat;
+            } catch (ClassCastException e) {
+                LOGGER.log(Level.WARNING, "Chat with id {0} is not a group chat", chatId);
+                return false;
+            }
+
+            groupChat.setDescription(newDescription);
+
+            Message message = new SystemTextMessage("Group description updated", new Date());
+            groupChat.addMessage(message);
+            groupChat.notifyParticipants(message);
+
+            return chatRepository.update(chat);
+
+        }).orElse(false);
     }
 
     @Override

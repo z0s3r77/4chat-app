@@ -17,6 +17,6 @@ public interface ChatService {
     Chat findChat(User user1, User user2);
     List<Chat> getUserChats(User user);
     boolean removeMessageFromChat(String chatId, String messageId);
-
     Chat createGroupChat(List<User> participants, List<User> groupAdmin, String groupName, String description);
+    boolean updateGroupChatDescription(String chatId, String newDescription);
 }

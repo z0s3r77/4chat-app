@@ -13,7 +13,7 @@ public class GroupChat implements Chat{
     private List<User> participants;
     private List<User> admins;
     private List<Message> messages;
-    private Date creationDate;
+    private final Date creationDate;
     private int messageCount = 0;
 
     public GroupChat(String groupName, String description, List<User> participants, List<User> admins, Date creationDate) {
@@ -93,6 +93,7 @@ public class GroupChat implements Chat{
 
     @Override
     public void notifyParticipants(Message message) {
+
         for (User user : participants) {
             if (user.equals(message.getSender())) {
                 continue;
@@ -100,4 +101,21 @@ public class GroupChat implements Chat{
             user.onMessageReceived(this , message);
         }
     }
+
+    public String getGroupName() {
+        return this.groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
 }

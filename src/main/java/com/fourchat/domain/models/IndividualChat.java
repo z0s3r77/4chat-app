@@ -98,4 +98,6 @@ public class IndividualChat implements Chat{
             user.onMessageReceived(this , message);
         }
     }
+
+
 }

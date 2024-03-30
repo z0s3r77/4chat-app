@@ -5,18 +5,18 @@ import java.util.List;
 
 public interface Chat {
 
-    public String getId();
-    public void setId(String id);
-    public List<User> getParticipants();
-    public void addParticipant(User user);
-    public void removeParticipant(User user);
-    public Date getCreationDate();
-    public List<Message> getMessages();
-    public Message getLastMessage();
-    public void addMessage(Message message);
-    public void removeMessage(Message message);
-    public void updateMessage(Message message);
-    public void notifyParticipants(Message message);
+    String getId();
+    void setId(String id);
+    List<User> getParticipants();
+    void addParticipant(User user);
+    void removeParticipant(User user);
+    Date getCreationDate();
+    List<Message> getMessages();
+    Message getLastMessage();
+    void addMessage(Message message);
+    void removeMessage(Message message);
+    void updateMessage(Message message);
+    void notifyParticipants(Message message);
 
 
 }

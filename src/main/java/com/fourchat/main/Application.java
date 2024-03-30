@@ -103,6 +103,13 @@ public class Application {
 		boolean messageDeletedGroup = chatService.removeMessageFromChat(groupChat.getId(), messageToDeleteGroup.getId());
 		size = carlosChat.getMessages().size();
 
+		System.out.println("------- Updating the group chat description ----------------");
+		chatService.updateGroupChatDescription(groupChat.getId(),  "This is the new description of the group chat");
+
+		carlosChat = chatService.getChats(carlos).getLast();
+
+
+
 
 	}
 
