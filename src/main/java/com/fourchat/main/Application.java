@@ -135,7 +135,7 @@ public class Application {
 		System.out.println("------- Adding a participant to the group chat ----------------");
 		// Pending for UserService
 		// chatService.addChatGroupParticipant();
-
+		// TODO Testing ChatService
 
 	}
 

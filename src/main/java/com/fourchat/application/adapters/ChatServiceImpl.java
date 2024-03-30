@@ -194,7 +194,6 @@ public class ChatServiceImpl implements ChatService {
 
         }).orElse(false);
 
-
     }
 
     @Override
