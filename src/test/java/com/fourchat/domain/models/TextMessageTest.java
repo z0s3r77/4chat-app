@@ -1,4 +1,5 @@
-package com.fourchat.domain;
+package com.fourchat.domain.models;
+
 
 import com.fourchat.domain.models.TextMessage;
 import com.fourchat.domain.models.User;
@@ -12,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TextMessageTest {
 
+    private TextMessage textMessage;
     private User sender;
     private String content;
     private Date creationDate;
-    private TextMessage textMessage;
 
     @BeforeEach
     public void setUp() {
@@ -26,29 +27,37 @@ class TextMessageTest {
     }
 
     @Test
-    public void testGetId() {
-        textMessage.setId(String.valueOf(1));
-        assertEquals(1, textMessage.getId());
+    void testGetId() {
+        textMessage.setId("123");
+        assertEquals("123", textMessage.getId());
     }
 
     @Test
-    public void testSetId() {
-        textMessage.setId(String.valueOf(2));
-        assertEquals(2, textMessage.getId());
-    }
-
-    @Test
-    public void testGetSender() {
+    void testGetSender() {
         assertEquals(sender, textMessage.getSender());
     }
 
     @Test
-    public void testGetContent() {
+    void testGetContent() {
         assertEquals(content, textMessage.getContent());
     }
 
     @Test
-    public void testGetCreationDate() {
+    void testGetCreationDate() {
         assertEquals(creationDate, textMessage.getCreationDate());
+    }
+
+    @Test
+    void testSetContent() {
+        String newContent = "New test content";
+        textMessage.setContent(newContent);
+        assertEquals(newContent, textMessage.getContent());
+    }
+
+    @Test
+    void testUpdated() {
+        assertFalse(textMessage.updated());
+        textMessage.setUpdated(true);
+        assertTrue(textMessage.updated());
     }
 }

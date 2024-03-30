@@ -15,8 +15,9 @@ public class IndividualChat implements Chat{
 
     public IndividualChat( List<User> participants, Date creationDate) {
 
+        this.messages = new ArrayList<>();
         this.creationDate = creationDate;
-        this.participants = participants;
+        this.participants = new ArrayList<>(participants);
     }
 
     @Override
