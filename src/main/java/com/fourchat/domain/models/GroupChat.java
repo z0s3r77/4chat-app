@@ -19,8 +19,8 @@ public class GroupChat implements Chat{
     public GroupChat(String groupName, String description, List<User> participants, List<User> admins, Date creationDate) {
         this.groupName = groupName;
         this.description = description;
-        this.participants = participants;
-        this.admins = admins;
+        this.participants = new ArrayList<>(participants);
+        this.admins = new ArrayList<>(admins);
         this.creationDate = creationDate;
     }
 
@@ -48,7 +48,13 @@ public class GroupChat implements Chat{
 
     @Override
     public void removeParticipant(User user) {
-        this.participants.remove(user);
+        List<User> updatedParticipants = new ArrayList<>();
+        for (User participant : this.participants) {
+            if (!participant.equals(user)) {
+                updatedParticipants.add(participant);
+            }
+        }
+        this.participants = updatedParticipants;
     }
 
     @Override
@@ -116,6 +122,20 @@ public class GroupChat implements Chat{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<User> getAdmins() {
+        return this.admins;
+    }
+
+    public void addAdmin(User admin) {
+        if (!this.admins.contains(admin)) {
+            this.admins.add(admin);
+        }
+    }
+
+    public void removeAdmin(User admin) {
+        this.admins.remove(admin);
     }
 
 }

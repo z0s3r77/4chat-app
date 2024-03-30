@@ -105,10 +105,36 @@ public class Application {
 
 		System.out.println("------- Updating the group chat description ----------------");
 		chatService.updateGroupChatDescription(groupChat.getId(),  "This is the new description of the group chat");
+		carlosChat = chatService.getChats(carlos).getLast();
 
+		System.out.println("------- Updating the group chat title -------");
+		chatService.updateGroupChatName(groupChat.getId(), "The Avengers: Earth's Mightiest Heroes");
 		carlosChat = chatService.getChats(carlos).getLast();
 
 
+		System.out.println("------- Removing a participant from the group chat ----------------");
+		// THIS USER IS NOT AN ADMIN
+		chatService.removeParticipantFromGroupChat(groupChat.getId(), raul.getUserName(), malek.getUserName());
+		carlosChat = chatService.getChats(carlos).getLast();
+
+		// THIS USER IS AN ADMIN
+		chatService.removeParticipantFromGroupChat(groupChat.getId(), carlos.getUserName(), malek.getUserName());
+		carlosChat = chatService.getChats(carlos).getLast();
+
+
+		System.out.println("------- Making a participant an admin of the group chat ----------------");
+		chatService.makeParticipantAdmin(groupChat.getId(), carlos.getUserName(), raul.getUserName());
+		carlosChat = chatService.getChats(carlos).getLast();
+
+		System.out.println("------- Removing a participant from admin of the group chat ----------------");
+		chatService.removeParticipantFromAdmins(groupChat.getId(), carlos.getUserName(), raul.getUserName());
+		carlosChat = chatService.getChats(carlos).getLast();
+
+
+
+		System.out.println("------- Adding a participant to the group chat ----------------");
+		// Pending for UserService
+		// chatService.addChatGroupParticipant();
 
 
 	}
