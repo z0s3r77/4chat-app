@@ -3,7 +3,6 @@ package com.fourchat.application.adapters;
 import com.fourchat.domain.models.*;
 import com.fourchat.domain.ports.ChatRepository;
 import com.fourchat.domain.ports.ChatService;
-import java.util.Collections;
 
 import java.util.Date;
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
 public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
-    private final Logger LOGGER = Logger.getLogger(ChatServiceImpl.class.getName());
+    private final Logger logger = Logger.getLogger(ChatServiceImpl.class.getName());
 
     public ChatServiceImpl(ChatRepository chatRepository) {
         this.chatRepository = chatRepository;
@@ -24,41 +23,29 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public List<Chat> getChats(User user) {
-        return chatRepository.findAll().stream()
+        return this.chatRepository.findAll().stream()
                 .filter(chat -> chat.getParticipants().contains(user))
-                .collect(Collectors.toList());    }
-
-    @Override
-    public void removeChat(User user, Chat chat) {
-        chat.getParticipants().remove(user);
-        chatRepository.save(chat);
-    }
-
-    @Override
-    public void addChatGroupParticipant(Chat groupChat, User groupAdmin, User participant) {
-        // Add the participant to the group chat
+                .collect(Collectors.toList());
     }
 
 
     private Chat createIndividualChat(List<User> participants) {
 
         Chat individualChat = new IndividualChat(participants, new Date());
-        return chatRepository.save(individualChat);
+        return this.chatRepository.save(individualChat);
     }
 
     @Override
     public boolean removeMessageFromChat(String chatId, String messageId) {
         AtomicBoolean messageRemoved = new AtomicBoolean(false);
-        chatRepository.findById(chatId).ifPresent(chat -> {
-            chat.getMessages().stream()
-                    .filter(message -> message.getId().equals(messageId))
-                    .findFirst()
-                    .ifPresent(message -> {
-                        message.setContent("This message has been removed");
-                        chatRepository.update(chat);
-                        messageRemoved.set(true);
-                    });
-        });
+        this.chatRepository.findById(chatId).ifPresent(chat -> chat.getMessages().stream()
+                .filter(message -> message.getId().equals(messageId))
+                .findFirst()
+                .ifPresent(message -> {
+                    message.setContent("This message has been removed");
+                    this.chatRepository.update(chat);
+                    messageRemoved.set(true);
+                }));
         return messageRemoved.get();
     }
 
@@ -66,20 +53,20 @@ public class ChatServiceImpl implements ChatService {
     public Chat createGroupChat(List<User> participants, List<User> groupAdmin, String groupName, String description) {
 
         Chat groupChat = new GroupChat(groupName, description, participants, groupAdmin, new Date());
-        return chatRepository.save(groupChat);
+        return this.chatRepository.save(groupChat);
     }
 
     @Override
     public boolean updateGroupChatDescription(String chatId, String newDescription) {
 
-        return chatRepository.findById(chatId).map( chat -> {
+        return this.chatRepository.findById(chatId).map(chat -> {
 
             GroupChat groupChat;
 
-            try{
-                 groupChat = (GroupChat) chat;
+            try {
+                groupChat = (GroupChat) chat;
             } catch (ClassCastException e) {
-                LOGGER.log(Level.WARNING, "Chat with id {0} is not a group chat", chatId);
+                this.logger.log(Level.WARNING, "Chat with id {0} is not a group chat", chatId);
                 return false;
             }
 
@@ -89,21 +76,21 @@ public class ChatServiceImpl implements ChatService {
             groupChat.addMessage(message);
             groupChat.notifyParticipants(message);
 
-            return chatRepository.update(chat);
+            return this.chatRepository.update(chat);
 
         }).orElse(false);
     }
 
     @Override
     public boolean updateGroupChatName(String chatId, String newGroupName) {
-        return chatRepository.findById(chatId).map( chat -> {
+        return this.chatRepository.findById(chatId).map(chat -> {
 
             GroupChat groupChat;
 
             try {
                 groupChat = (GroupChat) chat;
             } catch (ClassCastException e) {
-                LOGGER.log(Level.WARNING, "Chat with id {0} is not a group chat", chatId);
+                this.logger.log(Level.WARNING, "Chat with id {0} is not a group chat", chatId);
                 return false;
             }
 
@@ -112,7 +99,7 @@ public class ChatServiceImpl implements ChatService {
             groupChat.addMessage(message);
             groupChat.notifyParticipants(message);
 
-            return chatRepository.update(chat);
+            return this.chatRepository.update(chat);
 
         }).orElse(false);
     }
@@ -120,14 +107,14 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public boolean removeParticipantFromGroupChat(String chatId, String adminName, String userName) {
 
-        return chatRepository.findById(chatId).map(chat -> {
+        return this.chatRepository.findById(chatId).map(chat -> {
 
             GroupChat groupChat;
 
             try {
                 groupChat = (GroupChat) chat;
             } catch (ClassCastException e) {
-                LOGGER.log(Level.WARNING, "Chat with id {0} is not a group chat", chatId);
+                this.logger.log(Level.WARNING, "Chat with id {0} is not a group chat", chatId);
                 return false;
             }
 
@@ -136,8 +123,8 @@ public class ChatServiceImpl implements ChatService {
                     .findFirst()
                     .orElse(null);
 
-            if (userAdmin == null ) {
-                LOGGER.log(Level.WARNING, "User {0} is not an admin of the group chat", adminName);
+            if (userAdmin == null) {
+                this.logger.log(Level.WARNING, "User {0} is not an admin of the group chat", adminName);
                 return false;
             }
 
@@ -148,16 +135,16 @@ public class ChatServiceImpl implements ChatService {
                     .orElse(null);
 
             if (userToRemove == null) {
-                LOGGER.log(Level.WARNING, "User {0} is not a participant of the group chat", userName);
+                this.logger.log(Level.WARNING, "User {0} is not a participant of the group chat", userName);
                 return false;
             }
 
             groupChat.removeParticipant(userToRemove);
-            Message message = new SystemTextMessage( userName + " removed from the group", new Date());
+            Message message = new SystemTextMessage(userName + " removed from the group", new Date());
             groupChat.addMessage(message);
             groupChat.notifyParticipants(message);
 
-            return chatRepository.update(chat);
+            return this.chatRepository.update(chat);
 
         }).orElse(false);
 
@@ -166,14 +153,14 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public boolean makeParticipantAdmin(String chatId, String adminName, String userName) {
 
-        return chatRepository.findById(chatId).map(chat -> {
+        return this.chatRepository.findById(chatId).map(chat -> {
 
             GroupChat groupChat;
 
             try {
                 groupChat = (GroupChat) chat;
             } catch (ClassCastException e) {
-                LOGGER.log(Level.WARNING, "Chat with id {0} is not a group chat", chatId);
+                this.logger.log(Level.WARNING, "Chat with id {0} is not a group chat", chatId);
                 return false;
             }
 
@@ -182,8 +169,8 @@ public class ChatServiceImpl implements ChatService {
                     .findFirst()
                     .orElse(null);
 
-            if (userAdmin == null ) {
-                LOGGER.log(Level.WARNING, "User {0} is not an admin of the group chat", adminName);
+            if (userAdmin == null) {
+                this.logger.log(Level.WARNING, "User {0} is not an admin of the group chat", adminName);
                 return false;
             }
 
@@ -194,19 +181,18 @@ public class ChatServiceImpl implements ChatService {
                     .orElse(null);
 
             if (userToMakeAdmin == null) {
-                LOGGER.log(Level.WARNING, "User {0} is not a participant of the group chat", userName);
+                this.logger.log(Level.WARNING, "User {0} is not a participant of the group chat", userName);
                 return false;
             }
 
             groupChat.addAdmin(userToMakeAdmin);
-            Message message = new SystemTextMessage( userName + " is new Admin ", new Date());
+            Message message = new SystemTextMessage(userName + " is new Admin ", new Date());
             groupChat.addMessage(message);
             groupChat.notifyParticipants(message);
 
-            return chatRepository.update(chat);
+            return this.chatRepository.update(chat);
 
         }).orElse(false);
-
 
 
     }
@@ -214,14 +200,14 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public boolean removeParticipantFromAdmins(String chatId, String adminName, String userName) {
 
-        return chatRepository.findById(chatId).map(chat -> {
+        return this.chatRepository.findById(chatId).map(chat -> {
 
             GroupChat groupChat;
 
             try {
                 groupChat = (GroupChat) chat;
             } catch (ClassCastException e) {
-                LOGGER.log(Level.WARNING, "Chat with id {0} is not a group chat", chatId);
+                this.logger.log(Level.WARNING, "Chat with id {0} is not a group chat", chatId);
                 return false;
             }
 
@@ -230,8 +216,8 @@ public class ChatServiceImpl implements ChatService {
                     .findFirst()
                     .orElse(null);
 
-            if (userAdmin == null ) {
-                LOGGER.log(Level.WARNING, "User {0} is not an admin of the group chat", adminName);
+            if (userAdmin == null) {
+                this.logger.log(Level.WARNING, "User {0} is not an admin of the group chat", adminName);
                 return false;
             }
 
@@ -242,19 +228,18 @@ public class ChatServiceImpl implements ChatService {
                     .orElse(null);
 
             if (userToDeleteFromAdmins == null) {
-                LOGGER.log(Level.WARNING, "User {0} is not a participant of the group chat", userName);
+                this.logger.log(Level.WARNING, "User {0} is not a participant of the group chat", userName);
                 return false;
             }
 
             groupChat.removeAdmin(userToDeleteFromAdmins);
-            Message message = new SystemTextMessage( userName + " is removed from admins ", new Date());
+            Message message = new SystemTextMessage(userName + " is removed from admins ", new Date());
             groupChat.addMessage(message);
             groupChat.notifyParticipants(message);
 
-            return chatRepository.update(chat);
+            return this.chatRepository.update(chat);
 
         }).orElse(false);
-
 
 
     }
@@ -262,18 +247,17 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public Chat sendMessage(User sender, Message message, User receiver) {
 
-        // Search for an existing chat between the sender and the receiver
-        Chat chat = findChat(sender, receiver);
+        Chat chat = this.findChat(sender, receiver);
 
         chat.addMessage(message);
         chat.notifyParticipants(message);
 
-        return chatRepository.save(chat);
+        return this.chatRepository.save(chat);
     }
 
     @Override
     public void updateMessageInChat(String chatId, Message messageUpdated) {
-        chatRepository.findById(chatId).ifPresent(chat -> {
+        this.chatRepository.findById(chatId).ifPresent(chat -> {
             chat.getMessages().stream()
                     .filter(message -> message.getId().equals(messageUpdated.getId()))
                     .findFirst()
@@ -281,31 +265,31 @@ public class ChatServiceImpl implements ChatService {
                         message.setContent(messageUpdated.getContent());
                         message.setUpdated(true);
                     });
-            chatRepository.update(chat);
+            this.chatRepository.update(chat);
         });
     }
 
     @Override
     public boolean sendMessage(String chatId, Message message) {
-        return chatRepository.findById(chatId).map(chat -> {
+        return this.chatRepository.findById(chatId).map(chat -> {
             chat.addMessage(message);
             chat.notifyParticipants(message);
-            chatRepository.save(chat);
+            this.chatRepository.save(chat);
             return true;
         }).orElse(false);
     }
 
     @Override
     public Chat findChat(User user1, User user2) {
-        return chatRepository.findAll().stream()
+        return this.chatRepository.findAll().stream()
                 .filter(chat -> chat.getParticipants().contains(user1) && chat.getParticipants().contains(user2))
                 .findFirst()
-                .orElseGet(() -> createIndividualChat(List.of(user1, user2)));
+                .orElseGet(() -> this.createIndividualChat(List.of(user1, user2)));
     }
 
 
     public Optional<Chat> findChatById(String chatId) {
-        return chatRepository.findById(chatId);
+        return this.chatRepository.findById(chatId);
     }
 
 }

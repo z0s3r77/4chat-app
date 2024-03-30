@@ -2,13 +2,12 @@ package com.fourchat.domain.models;
 
 import java.util.Date;
 
-public class SystemTextMessage implements  Message{
+public class SystemTextMessage implements Message {
 
     private String id;
     private String content;
-    private Date creationDate;
+    private final Date creationDate;
     private final User sender;
-    private boolean simpleTextMessage = true;
 
 
     public SystemTextMessage(String content, Date creationDate) {
@@ -55,16 +54,15 @@ public class SystemTextMessage implements  Message{
 
     @Override
     public void setUpdated(boolean updated) {
-        // TODO document why this method is empty
+        // System messages cannot be updated
     }
 
     @Override
     public String toString() {
         return "SimpleTextMessage{" +
-                "id='" + id + '\'' +
-                ", content='" + content + '\'' +
-                ", creationDate=" + creationDate +
-                ", simpleTextMessage=" + simpleTextMessage +
+                "id='" + this.id + '\'' +
+                ", content='" + this.content + '\'' +
+                ", creationDate=" + this.creationDate +
                 '}';
     }
 }
