@@ -29,8 +29,8 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public List<Chat> getChatsFromUser(User user) {
-        return this.chatRepository.findByUser(user.getUserName());
+    public List<Chat> getChatsFromUser(String userName) {
+        return this.chatRepository.findByUser(userName);
     }
 
 

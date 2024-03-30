@@ -40,12 +40,12 @@ public class Application {
         Message message1 = new TextMessage(carlos, "Hello Raul ", new Date());
 
         chatService.sendMessage(carlos, message1, raul);
-        Chat carlosChat = chatService.getChatsFromUser(carlos).getFirst();
+        Chat carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getFirst();
         int size = carlosChat.getMessages().size();
 
         Message message2 = new TextMessage(raul, "Hello Carlos", new Date());
         chatService.sendMessage(raul, message2, carlos);
-        carlosChat = chatService.getChatsFromUser(carlos).getFirst();
+        carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getFirst();
 
         Message message3 = new TextMessage(carlos, "I'm creating a chat app", new Date());
         chatService.sendMessage(carlos, message3, raul);
@@ -57,14 +57,14 @@ public class Application {
         chatService.updateMessageInChat(carlosChat.getId(), messageUpdated);
 
         size = carlosChat.getMessages().size();
-        carlosChat = chatService.getChatsFromUser(carlos).getFirst();
+        carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getFirst();
 
 
         // Remove message from chat
         Message messageToDelete = carlosChat.getMessages().get(2);
         boolean messageDeleted = chatService.removeMessageFromChat(carlosChat.getId(), messageToDelete.getId());
         size = carlosChat.getMessages().size();
-        carlosChat = chatService.getChatsFromUser(carlos).getFirst();
+        carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getFirst();
 
 
         // Create another Chat
@@ -74,15 +74,15 @@ public class Application {
         Message message4 = new TextMessage(carlos, "Hello Malek", new Date());
         chatService.sendMessage(carlos, message4, malek);
 
-        carlosChat = chatService.getChatsFromUser(carlos).get(1);
-        Chat malekChat = chatService.getChatsFromUser(malek).getFirst();
+        carlosChat = chatService.getChatsFromUser(carlos.getUserName()).get(1);
+        Chat malekChat = chatService.getChatsFromUser(malek.getUserName()).getFirst();
 
 
         // Create a group chat
         System.out.println("------- Creating a group chat ----------------");
 
         Chat groupChat = chatService.createGroupChat(Arrays.asList(carlos, raul, malek), Arrays.asList(carlos), "The Avengers", "The earth's protectors");
-        carlosChat = chatService.getChatsFromUser(carlos).getLast();
+        carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getLast();
 
         // Send message to the group
         System.out.println("------- Sending a message to the group ----------------");
@@ -91,7 +91,7 @@ public class Application {
 
         Message messageGroup2 = new TextMessage(raul, "Hello everyone, Im Raul", new Date());
         chatService.sendMessage(groupChat.getId(), messageGroup2);
-        carlosChat = chatService.getChatsFromUser(carlos).getLast();
+        carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getLast();
 
         System.out.println("------- Updating a message in the group chat ----------------");
         Message messageToUpdateGroup = carlosChat.getMessages().get(1);
@@ -100,13 +100,13 @@ public class Application {
         chatService.updateMessageInChat(groupChat.getId(), messageUpdatedGroup);
 
         size = carlosChat.getMessages().size();
-        carlosChat = chatService.getChatsFromUser(carlos).getLast();
+        carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getLast();
 
         System.out.println("------- Removing a message from the group chat ----------------");
 
         Message messageGroup3 = new TextMessage(raul, "This message will be removed", new Date());
         chatService.sendMessage(groupChat.getId(), messageGroup3);
-        carlosChat = chatService.getChatsFromUser(carlos).getLast();
+        carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getLast();
 
         Message messageToDeleteGroup = carlosChat.getMessages().getLast();
         boolean messageDeletedGroup = chatService.removeMessageFromChat(groupChat.getId(), messageToDeleteGroup.getId());
@@ -114,35 +114,35 @@ public class Application {
 
         System.out.println("------- Updating the group chat description ----------------");
         chatService.updateGroupChatDescription(groupChat.getId(), "This is the new description of the group chat");
-        carlosChat = chatService.getChatsFromUser(carlos).getLast();
+        carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getLast();
 
         System.out.println("------- Updating the group chat title -------");
         chatService.updateGroupChatName(groupChat.getId(), "The Avengers: Earth's Mightiest Heroes");
-        carlosChat = chatService.getChatsFromUser(carlos).getLast();
+        carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getLast();
 
 
         System.out.println("------- Removing a participant from the group chat ----------------");
         // THIS USER IS NOT AN ADMIN
         chatService.removeParticipantFromGroupChat(groupChat.getId(), raul.getUserName(), malek.getUserName());
-        carlosChat = chatService.getChatsFromUser(carlos).getLast();
+        carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getLast();
 
         // THIS USER IS AN ADMIN
         chatService.removeParticipantFromGroupChat(groupChat.getId(), carlos.getUserName(), malek.getUserName());
-        carlosChat = chatService.getChatsFromUser(carlos).getLast();
+        carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getLast();
 
 
         System.out.println("------- Making a participant an admin of the group chat ----------------");
         chatService.makeParticipantAdmin(groupChat.getId(), carlos.getUserName(), raul.getUserName());
-        carlosChat = chatService.getChatsFromUser(carlos).getLast();
+        carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getLast();
 
         System.out.println("------- Removing a participant from admin of the group chat ----------------");
         chatService.removeParticipantFromAdmins(groupChat.getId(), carlos.getUserName(), raul.getUserName());
-        carlosChat = chatService.getChatsFromUser(carlos).getLast();
+        carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getLast();
 
 
         System.out.println("------- Adding a participant to the group chat ----------------");
         chatService.addParticipantToGroupChat(groupChat.getId(), carlos.getUserName(), malek.getUserName());
-        carlosChat = chatService.getChatsFromUser(carlos).getLast();
+        carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getLast();
 
     }
 

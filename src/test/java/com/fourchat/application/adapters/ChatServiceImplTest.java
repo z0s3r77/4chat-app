@@ -42,7 +42,7 @@ class ChatServiceImplTest {
 
         when(this.chatRepositoryMock.findByUser(testUser.getUserName())).thenReturn(Arrays.asList(chat1, chat2));
 
-        List<Chat> result = this.chatService.getChatsFromUser(testUser);
+        List<Chat> result = this.chatService.getChatsFromUser(testUser.getUserName());
 
         assertEquals(2, result.size(), "Should return 2 chats");
         assertTrue(result.contains(chat1), "Should contain the first chat");

@@ -1,6 +1,5 @@
 package com.fourchat.domain.ports;
 
-import com.fourchat.domain.models.Chat;
 import com.fourchat.domain.models.User;
 
 import java.util.Optional;
