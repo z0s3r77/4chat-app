@@ -39,9 +39,9 @@ class ChatServiceImplTest {
         Chat chat2 = new IndividualChat(Arrays.asList(testUser, new BasicUser("Ana", "user3@email.com")), new Date());
         Chat chat3 = new IndividualChat(Arrays.asList(new BasicUser("Pedro", "user4@email.com"), new BasicUser("Ana", "user3@email.com")), new Date());
 
-        when(this.chatRepositoryMock.findAll()).thenReturn(Arrays.asList(chat1, chat2, chat3));
+        when(this.chatRepositoryMock.findByUser(testUser.getUserName())).thenReturn(Arrays.asList(chat1, chat2));
 
-        List<Chat> result = this.chatService.getChats(testUser);
+        List<Chat> result = this.chatService.getChatsFromUser(testUser);
 
         assertEquals(2, result.size(), "Should return 2 chats");
         assertTrue(result.contains(chat1), "Should contain the first chat");

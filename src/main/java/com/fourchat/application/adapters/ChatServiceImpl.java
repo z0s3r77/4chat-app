@@ -10,22 +10,24 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
     private final Logger logger = Logger.getLogger(ChatServiceImpl.class.getName());
 
+    private static final String CHAT_IS_NOT_GROUP_CHAT = "Chat with id {0} is not a group chat";
+    private static final String USER_IS_NOT_ADMIN = "User {0} is not an admin of the group chat";
+    private static final String USER_IS_NOT_PARTICIPANT = "User {0} is not a participant of the group chat";
+
+
     public ChatServiceImpl(ChatRepository chatRepository) {
         this.chatRepository = chatRepository;
     }
 
     @Override
-    public List<Chat> getChats(User user) {
-        return this.chatRepository.findAll().stream()
-                .filter(chat -> chat.getParticipants().contains(user))
-                .collect(Collectors.toList());
+    public List<Chat> getChatsFromUser(User user) {
+        return this.chatRepository.findByUser(user.getUserName());
     }
 
 
@@ -66,7 +68,7 @@ public class ChatServiceImpl implements ChatService {
             try {
                 groupChat = (GroupChat) chat;
             } catch (ClassCastException e) {
-                this.logger.log(Level.WARNING, "Chat with id {0} is not a group chat", chatId);
+                this.logger.log(Level.WARNING, CHAT_IS_NOT_GROUP_CHAT, chatId);
                 return false;
             }
 
@@ -90,7 +92,7 @@ public class ChatServiceImpl implements ChatService {
             try {
                 groupChat = (GroupChat) chat;
             } catch (ClassCastException e) {
-                this.logger.log(Level.WARNING, "Chat with id {0} is not a group chat", chatId);
+                this.logger.log(Level.WARNING, CHAT_IS_NOT_GROUP_CHAT, chatId);
                 return false;
             }
 
@@ -114,7 +116,7 @@ public class ChatServiceImpl implements ChatService {
             try {
                 groupChat = (GroupChat) chat;
             } catch (ClassCastException e) {
-                this.logger.log(Level.WARNING, "Chat with id {0} is not a group chat", chatId);
+                this.logger.log(Level.WARNING, CHAT_IS_NOT_GROUP_CHAT, chatId);
                 return false;
             }
 
@@ -124,7 +126,7 @@ public class ChatServiceImpl implements ChatService {
                     .orElse(null);
 
             if (userAdmin == null) {
-                this.logger.log(Level.WARNING, "User {0} is not an admin of the group chat", adminName);
+                this.logger.log(Level.WARNING, USER_IS_NOT_ADMIN, adminName);
                 return false;
             }
 
@@ -135,7 +137,7 @@ public class ChatServiceImpl implements ChatService {
                     .orElse(null);
 
             if (userToRemove == null) {
-                this.logger.log(Level.WARNING, "User {0} is not a participant of the group chat", userName);
+                this.logger.log(Level.WARNING, USER_IS_NOT_PARTICIPANT, userName);
                 return false;
             }
 
@@ -160,7 +162,7 @@ public class ChatServiceImpl implements ChatService {
             try {
                 groupChat = (GroupChat) chat;
             } catch (ClassCastException e) {
-                this.logger.log(Level.WARNING, "Chat with id {0} is not a group chat", chatId);
+                this.logger.log(Level.WARNING, CHAT_IS_NOT_GROUP_CHAT, chatId);
                 return false;
             }
 
@@ -170,7 +172,7 @@ public class ChatServiceImpl implements ChatService {
                     .orElse(null);
 
             if (userAdmin == null) {
-                this.logger.log(Level.WARNING, "User {0} is not an admin of the group chat", adminName);
+                this.logger.log(Level.WARNING, USER_IS_NOT_ADMIN, adminName);
                 return false;
             }
 
@@ -181,7 +183,7 @@ public class ChatServiceImpl implements ChatService {
                     .orElse(null);
 
             if (userToMakeAdmin == null) {
-                this.logger.log(Level.WARNING, "User {0} is not a participant of the group chat", userName);
+                this.logger.log(Level.WARNING, USER_IS_NOT_PARTICIPANT, userName);
                 return false;
             }
 
@@ -206,7 +208,7 @@ public class ChatServiceImpl implements ChatService {
             try {
                 groupChat = (GroupChat) chat;
             } catch (ClassCastException e) {
-                this.logger.log(Level.WARNING, "Chat with id {0} is not a group chat", chatId);
+                this.logger.log(Level.WARNING, CHAT_IS_NOT_GROUP_CHAT, chatId);
                 return false;
             }
 
@@ -216,7 +218,7 @@ public class ChatServiceImpl implements ChatService {
                     .orElse(null);
 
             if (userAdmin == null) {
-                this.logger.log(Level.WARNING, "User {0} is not an admin of the group chat", adminName);
+                this.logger.log(Level.WARNING, USER_IS_NOT_ADMIN, adminName);
                 return false;
             }
 
@@ -227,7 +229,7 @@ public class ChatServiceImpl implements ChatService {
                     .orElse(null);
 
             if (userToDeleteFromAdmins == null) {
-                this.logger.log(Level.WARNING, "User {0} is not a participant of the group chat", userName);
+                this.logger.log(Level.WARNING, USER_IS_NOT_PARTICIPANT, userName);
                 return false;
             }
 

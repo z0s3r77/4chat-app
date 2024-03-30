@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class ChatRepositoryImpl implements ChatRepository {
 
@@ -36,11 +37,6 @@ public class ChatRepositoryImpl implements ChatRepository {
     }
 
     @Override
-    public boolean delete(Chat chat) {
-        return chats.removeIf(c -> Objects.equals(c.getId(), chat.getId()));
-    }
-
-    @Override
     public boolean update(Chat chat) {
         for (int i = 0; i < chats.size(); i++) {
             if (Objects.equals(chats.get(i).getId(), chat.getId())) {
@@ -54,5 +50,12 @@ public class ChatRepositoryImpl implements ChatRepository {
     @Override
     public List<Chat> findAll() {
         return chats;
+    }
+
+    @Override
+    public List<Chat> findByUser(String userName) {
+        return chats.stream()
+                .filter(chat -> chat.getParticipants().stream().anyMatch(user -> Objects.equals(user.getUserName(), userName)))
+                .collect(Collectors.toList());
     }
 }

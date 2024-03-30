@@ -11,11 +11,11 @@ public interface ChatRepository {
 
     Chat save(Chat chat);
 
-    boolean delete(Chat chat);
-
     boolean update(Chat chat);
 
     List<Chat> findAll();
+
+    List<Chat> findByUser(String userName);
 
 
 }
