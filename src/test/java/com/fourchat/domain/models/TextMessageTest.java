@@ -1,8 +1,6 @@
 package com.fourchat.domain.models;
 
 
-import com.fourchat.domain.models.TextMessage;
-import com.fourchat.domain.models.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -20,44 +18,44 @@ class TextMessageTest {
 
     @BeforeEach
     public void setUp() {
-        sender = Mockito.mock(User.class);
-        content = "Test content";
-        creationDate = new Date();
-        textMessage = new TextMessage(sender, content, creationDate);
+        this.sender = Mockito.mock(User.class);
+        this.content = "Test content";
+        this.creationDate = new Date();
+        this.textMessage = new TextMessage(this.sender, this.content, this.creationDate);
     }
 
     @Test
     void testGetId() {
-        textMessage.setId("123");
-        assertEquals("123", textMessage.getId());
+        this.textMessage.setId("123");
+        assertEquals("123", this.textMessage.getId());
     }
 
     @Test
     void testGetSender() {
-        assertEquals(sender, textMessage.getSender());
+        assertEquals(this.sender, this.textMessage.getSender());
     }
 
     @Test
     void testGetContent() {
-        assertEquals(content, textMessage.getContent());
+        assertEquals(this.content, this.textMessage.getContent());
     }
 
     @Test
     void testGetCreationDate() {
-        assertEquals(creationDate, textMessage.getCreationDate());
+        assertEquals(this.creationDate, this.textMessage.getCreationDate());
     }
 
     @Test
     void testSetContent() {
         String newContent = "New test content";
-        textMessage.setContent(newContent);
-        assertEquals(newContent, textMessage.getContent());
+        this.textMessage.setContent(newContent);
+        assertEquals(newContent, this.textMessage.getContent());
     }
 
     @Test
     void testUpdated() {
-        assertFalse(textMessage.updated());
-        textMessage.setUpdated(true);
-        assertTrue(textMessage.updated());
+        assertFalse(this.textMessage.updated());
+        this.textMessage.setUpdated(true);
+        assertTrue(this.textMessage.updated());
     }
 }
