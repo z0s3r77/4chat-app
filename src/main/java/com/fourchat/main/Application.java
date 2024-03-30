@@ -1,10 +1,14 @@
 package com.fourchat.main;
 
 import com.fourchat.application.adapters.ChatServiceImpl;
+import com.fourchat.application.adapters.UserServiceImpl;
 import com.fourchat.domain.models.*;
 import com.fourchat.domain.ports.ChatRepository;
 import com.fourchat.domain.ports.ChatService;
+import com.fourchat.domain.ports.UserRepository;
+import com.fourchat.domain.ports.UserService;
 import com.fourchat.infrastructure.adapters.ChatRepositoryImpl;
+import com.fourchat.infrastructure.adapters.UserRepositoryImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -17,11 +21,17 @@ public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
 
-        User carlos = new BasicUser("Carlos", "user1@email.com");
-        User raul = new BasicUser("Raul", "user2@email.com");
+
+        UserRepository userRepository = new UserRepositoryImpl();
+        UserService userService = new UserServiceImpl(userRepository);
 
         ChatRepository chatRepository = new ChatRepositoryImpl();
-        ChatService chatService = new ChatServiceImpl(chatRepository);
+        ChatService chatService = new ChatServiceImpl(chatRepository, userService);
+
+
+        User carlos = userService.createBasicUser("Carlos", "user1@email.com");
+        User raul = userService.createBasicUser("Raul", "user2@email.com");
+
 
 
         // Create a chat between Carlos and Raul
@@ -60,7 +70,7 @@ public class Application {
         // Create another Chat
         System.out.println("------- Creating another chat between Carlos and Malek ----------------");
 
-        User malek = new BasicUser("malek", "malek@gmail.com");
+        User malek = userService.createBasicUser("malek", "malek@gmail.com");
         Message message4 = new TextMessage(carlos, "Hello Malek", new Date());
         chatService.sendMessage(carlos, message4, malek);
 
@@ -131,9 +141,8 @@ public class Application {
 
 
         System.out.println("------- Adding a participant to the group chat ----------------");
-        // Pending for UserService
-        // chatService.addChatGroupParticipant();
-        // TODO Testing ChatService
+        chatService.addParticipantToGroupChat(groupChat.getId(), carlos.getUserName(), malek.getUserName());
+        carlosChat = chatService.getChatsFromUser(carlos).getLast();
 
     }
 

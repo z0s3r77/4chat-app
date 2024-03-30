@@ -2,6 +2,7 @@ package com.fourchat.application.adapters;
 
 import com.fourchat.domain.models.*;
 import com.fourchat.domain.ports.ChatRepository;
+import com.fourchat.domain.ports.UserService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -14,7 +15,8 @@ import static org.mockito.Mockito.*;
 class ChatServiceImplTest {
 
     ChatRepository chatRepositoryMock = Mockito.mock(ChatRepository.class);
-    ChatServiceImpl chatService = new ChatServiceImpl(this.chatRepositoryMock);
+    UserService userServiceMock = Mockito.mock(UserService.class);
+    ChatServiceImpl chatService = new ChatServiceImpl(this.chatRepositoryMock, this.userServiceMock);
 
     User user1 = new BasicUser("Carlos", "user1@email.com");
     User user2 = new BasicUser("Raul", "user2@email.com");

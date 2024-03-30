@@ -3,6 +3,7 @@ package com.fourchat.application.adapters;
 import com.fourchat.domain.models.*;
 import com.fourchat.domain.ports.ChatRepository;
 import com.fourchat.domain.ports.ChatService;
+import com.fourchat.domain.ports.UserService;
 
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.logging.Logger;
 public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
+    private final UserService userService;
     private final Logger logger = Logger.getLogger(ChatServiceImpl.class.getName());
 
     private static final String CHAT_IS_NOT_GROUP_CHAT = "Chat with id {0} is not a group chat";
@@ -21,7 +23,8 @@ public class ChatServiceImpl implements ChatService {
     private static final String USER_IS_NOT_PARTICIPANT = "User {0} is not a participant of the group chat";
 
 
-    public ChatServiceImpl(ChatRepository chatRepository) {
+    public ChatServiceImpl(ChatRepository chatRepository, UserService userService) {
+        this.userService = userService;
         this.chatRepository = chatRepository;
     }
 
@@ -235,6 +238,50 @@ public class ChatServiceImpl implements ChatService {
 
             groupChat.removeAdmin(userToDeleteFromAdmins);
             Message message = new SystemTextMessage(userName + " is removed from admins ", new Date());
+            groupChat.addMessage(message);
+            groupChat.notifyParticipants(message);
+
+            return this.chatRepository.update(chat);
+
+        }).orElse(false);
+
+
+    }
+
+    @Override
+    public boolean addParticipantToGroupChat(String chatId, String adminName, String userName) {
+
+        return this.chatRepository.findById(chatId).map(chat -> {
+
+            GroupChat groupChat;
+
+            try {
+                groupChat = (GroupChat) chat;
+            } catch (ClassCastException e) {
+                this.logger.log(Level.WARNING, CHAT_IS_NOT_GROUP_CHAT, chatId);
+                return false;
+            }
+
+            User userAdmin = groupChat.getAdmins().stream()
+                    .filter(user -> user.getUserName().equals(adminName))
+                    .findFirst()
+                    .orElse(null);
+
+            if (userAdmin == null) {
+                this.logger.log(Level.WARNING, USER_IS_NOT_ADMIN, adminName);
+                return false;
+            }
+
+            Optional<User> userToAdd = this.userService.getUserByUserName(userName);
+
+            if (userToAdd.isEmpty()) {
+                this.logger.log(Level.WARNING, "User {0} does not exist", userName);
+                return false;
+            }
+
+            groupChat.addParticipant(userToAdd.get());
+
+            Message message = new SystemTextMessage(userName + " added to the group", new Date());
             groupChat.addMessage(message);
             groupChat.notifyParticipants(message);
 

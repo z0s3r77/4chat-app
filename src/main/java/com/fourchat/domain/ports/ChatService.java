@@ -31,4 +31,5 @@ public interface ChatService {
     boolean makeParticipantAdmin(String chatId, String adminName, String userName);
 
     boolean removeParticipantFromAdmins(String chatId, String adminName, String userName);
+    boolean addParticipantToGroupChat(String chatId, String adminName, String userName);
 }

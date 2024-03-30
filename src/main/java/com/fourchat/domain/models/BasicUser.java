@@ -2,12 +2,22 @@ package com.fourchat.domain.models;
 
 public class BasicUser implements User{
 
+    private String id;
     private String userName;
     private String email;
 
     public BasicUser(String userName, String email) {
         this.userName = userName;
         this.email = email;
+    }
+
+    @Override
+    public String getId() {
+        return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
