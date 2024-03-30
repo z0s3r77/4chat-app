@@ -37,7 +37,6 @@ class ChatServiceImplTest {
         User testUser = new BasicUser("Carlos", "user1@email.com");
         Chat chat1 = new IndividualChat(Arrays.asList(testUser, new BasicUser("Raul", "user2@email.com")), new Date());
         Chat chat2 = new IndividualChat(Arrays.asList(testUser, new BasicUser("Ana", "user3@email.com")), new Date());
-        Chat chat3 = new IndividualChat(Arrays.asList(new BasicUser("Pedro", "user4@email.com"), new BasicUser("Ana", "user3@email.com")), new Date());
 
         when(this.chatRepositoryMock.findByUser(testUser.getUserName())).thenReturn(Arrays.asList(chat1, chat2));
 
