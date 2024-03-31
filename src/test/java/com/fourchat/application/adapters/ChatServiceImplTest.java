@@ -3,6 +3,7 @@ package com.fourchat.application.adapters;
 import com.fourchat.domain.models.*;
 import com.fourchat.domain.ports.ChatRepository;
 import com.fourchat.domain.ports.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -21,16 +22,16 @@ class ChatServiceImplTest {
     User user1 = new BasicUser("Carlos", "user1@email.com");
     User user2 = new BasicUser("Raul", "user2@email.com");
 
+    @BeforeEach
+    void setUp() {
+        User user1 = new BasicUser("Carlos", "user1@email.com");
+        User user2 = new BasicUser("Raul", "user2@email.com");
 
-    @Test
-    void findChat() {
-        Chat chat = this.chatService.findChat(this.user1, this.user2);
-        assertNull(chat, "Chat should be null");
-
-        when(this.chatRepositoryMock.findAll()).thenReturn(List.of(new IndividualChat(Arrays.asList(this.user1, this.user2), new Date())));
-        chat = this.chatService.findChat(this.user1, this.user2);
-        assertNotNull(chat, "Chat should not be null");
+        when(userServiceMock.getUserByUserName(user1.getUserName())).thenReturn(Optional.of(user1));
+        when(userServiceMock.getUserByUserName(user2.getUserName())).thenReturn(Optional.of(user2));
     }
+
+
 
 
     @Test
@@ -118,7 +119,10 @@ class ChatServiceImplTest {
 
         when(this.chatRepositoryMock.save(any(Chat.class))).thenReturn(groupChatExpected);
 
-        Chat result = this.chatService.createGroupChat(participants, groupAdmin, groupName, description);
+        List<String> participantsName = Arrays.asList(this.user1.getUserName(), this.user2.getUserName());
+        List<String> groupAdminName = Collections.singletonList(this.user1.getUserName());
+
+        Chat result = this.chatService.createGroupChat(participantsName, groupAdminName, groupName, description);
 
         assertEquals(groupChatExpected, result, "Should return the group chat created");
     }
@@ -537,7 +541,7 @@ class ChatServiceImplTest {
 
         when(chatRepositoryMock.save(any(Chat.class))).thenReturn(chatExpected);
 
-        Chat result = chatService.sendMessage(sender, message, receiver);
+        Chat result = chatService.sendMessage(sender.getUserName(), message, receiver.getUserName());
 
         assertEquals(chatExpected, result, "Should return the chat created");
         assertTrue(result.getMessages().contains(message), "Should contain the message sent");
@@ -553,7 +557,7 @@ class ChatServiceImplTest {
 
         when(chatRepositoryMock.save(any(Chat.class))).thenReturn(chatExpected);
 
-        Chat result = chatService.sendMessage(sender, message, receiver);
+        Chat result = chatService.sendMessage(sender.getUserName(), message, receiver.getUserName());
 
         assertEquals(chatExpected, result, "Should return a new chat created");
         assertTrue(result.getMessages().contains(message), "Should contain the message sent");
@@ -666,44 +670,7 @@ class ChatServiceImplTest {
         assertFalse(result);
     }
 
-    @Test
-    void testFindChat() {
 
-
-        User user1 = new BasicUser("Carlos", "user1@email.com");
-        User user2 = new BasicUser("Raul", "user2@email.com");
-        Chat chat1 = new IndividualChat(Arrays.asList(user1, user2), new Date());
-        Chat chat2 = new IndividualChat(Arrays.asList(user1, new BasicUser("Ana", "user3@email.com")), new Date());
-
-
-        when(this.chatRepositoryMock.findAll()).thenReturn(Arrays.asList(chat1, chat2));
-
-
-        Chat result = this.chatService.findChat(user1, user2);
-
-
-        assertEquals(chat1, result);
-    }
-
-    @Test
-    void FindChatCreateChatIfNotExists() {
-
-        User user1 = new BasicUser("Carlos", "user1@email.com");
-        User user2 = new BasicUser("Raul", "user2@email.com");
-        Chat chat1 = new IndividualChat(Arrays.asList(user1, new BasicUser("Ana", "user3@email.com")), new Date());
-
-
-        when(this.chatRepositoryMock.save(any(Chat.class))).thenReturn(chat1);
-
-
-        Chat result = this.chatService.findChat(user1, user2);
-
-
-        verify(this.chatRepositoryMock).save(any(Chat.class));
-
-
-        assertNotNull(result);
-    }
 
     @Test
     void findChatById() {
@@ -719,4 +686,85 @@ class ChatServiceImplTest {
         assertTrue(result.isPresent(), "Should return a chat");
         assertEquals(chatExpected, result.get(), "Should return the chat created");
     }
+
+    @Test
+    void addParticipantToGroupChat_ChatDoesNotExist_ReturnsFalse() {
+        String chatId = "123";
+        String adminName = "Carlos";
+        String userName = "Raul";
+
+        when(this.chatRepositoryMock.findById(chatId)).thenReturn(Optional.empty());
+
+        boolean result = this.chatService.addParticipantToGroupChat(chatId, adminName, userName);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void addParticipantToGroupChat_ChatIsNotGroup_ReturnsFalse() {
+        String chatId = "123";
+        String adminName = "Carlos";
+        String userName = "Raul";
+
+        Chat chat = new IndividualChat(Arrays.asList(this.user1, this.user2), new Date());
+        chat.setId(chatId);
+
+        when(this.chatRepositoryMock.findById(chatId)).thenReturn(Optional.of(chat));
+
+        boolean result = this.chatService.addParticipantToGroupChat(chatId, adminName, userName);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void addParticipantToGroupChat_AdminDoesNotExist_ReturnsFalse() {
+        String chatId = "123";
+        String adminName = "Carlos";
+        String userName = "Raul";
+
+        GroupChat groupChat = new GroupChat("Test Group", "This is a test group", Collections.singletonList(this.user2), Collections.singletonList(this.user2), new Date());
+        groupChat.setId(chatId);
+
+        when(this.chatRepositoryMock.findById(chatId)).thenReturn(Optional.of(groupChat));
+
+        boolean result = this.chatService.addParticipantToGroupChat(chatId, adminName, userName);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void addParticipantToGroupChat_UserDoesNotExist_ReturnsFalse() {
+        String chatId = "123";
+        String adminName = "Carlos";
+        String userName = "Raul";
+
+        GroupChat groupChat = new GroupChat("Test Group", "This is a test group", Collections.singletonList(this.user1), Collections.singletonList(this.user1), new Date());
+        groupChat.setId(chatId);
+
+        when(this.chatRepositoryMock.findById(chatId)).thenReturn(Optional.of(groupChat));
+        when(this.userServiceMock.getUserByUserName(userName)).thenReturn(Optional.empty());
+
+        boolean result = this.chatService.addParticipantToGroupChat(chatId, adminName, userName);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void addParticipantToGroupChat_ValidInputs_ReturnsTrue() {
+        String chatId = "123";
+        String adminName = "Carlos";
+        String userName = "Raul";
+
+        GroupChat groupChat = new GroupChat("Test Group", "This is a test group", Collections.singletonList(this.user1), Collections.singletonList(this.user1), new Date());
+        groupChat.setId(chatId);
+
+        when(this.chatRepositoryMock.findById(chatId)).thenReturn(Optional.of(groupChat));
+        when(this.userServiceMock.getUserByUserName(userName)).thenReturn(Optional.of(this.user2));
+        when(this.chatRepositoryMock.update(any(Chat.class))).thenReturn(true);
+
+        boolean result = this.chatService.addParticipantToGroupChat(chatId, adminName, userName);
+
+        assertTrue(result);
+    }
+
 }

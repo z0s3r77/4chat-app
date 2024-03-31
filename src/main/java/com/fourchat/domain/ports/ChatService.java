@@ -10,18 +10,14 @@ public interface ChatService {
 
     List<Chat> getChatsFromUser(String userName);
 
-    Chat sendMessage(User sender, Message message, User receiver);
+    Chat sendMessage(String userNameSender, Message message, String userNameReceiver);
 
     void updateMessageInChat(String chatId, Message messageUpdated);
 
     boolean sendMessage(String chatId, Message message);
-
-    Chat findChat(User user1, User user2);
-
     boolean removeMessageFromChat(String chatId, String messageId);
 
-    Chat createGroupChat(List<User> participants, List<User> groupAdmin, String groupName, String description);
-
+    Chat createGroupChat(List<String> participantsName, List<String> groupAdminNames, String groupName, String description);
     boolean updateGroupChatDescription(String chatId, String newDescription);
 
     boolean updateGroupChatName(String chatId, String newGroupName);

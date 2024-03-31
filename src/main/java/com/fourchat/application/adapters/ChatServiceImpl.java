@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ChatServiceImpl implements ChatService {
 
@@ -34,9 +35,15 @@ public class ChatServiceImpl implements ChatService {
     }
 
 
-    private Chat createIndividualChat(List<User> participants) {
+    private Chat createIndividualChat(List<String> participantsName) {
 
-        Chat individualChat = new IndividualChat(participants, new Date());
+        List<User> participantsInChat = participantsName.stream()
+                .map(userName -> this.userService.getUserByUserName(userName)
+                        .orElseThrow(() -> new IllegalArgumentException("User not found")))
+                .collect(Collectors.toList());
+
+        Chat individualChat = new IndividualChat(participantsInChat, new Date());
+
         return this.chatRepository.save(individualChat);
     }
 
@@ -55,9 +62,19 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public Chat createGroupChat(List<User> participants, List<User> groupAdmin, String groupName, String description) {
+    public Chat createGroupChat(List<String> participantsName, List<String> groupAdminNames, String groupName, String description) {
 
-        Chat groupChat = new GroupChat(groupName, description, participants, groupAdmin, new Date());
+        List<User> participantsInChat = participantsName.stream()
+                .map(userName -> this.userService.getUserByUserName(userName)
+                        .orElseThrow(() -> new IllegalArgumentException("User not found")))
+                .collect(Collectors.toList());
+
+        List<User> groupAdmin = groupAdminNames.stream()
+                .map(userName -> this.userService.getUserByUserName(userName)
+                        .orElseThrow(() -> new IllegalArgumentException("User not found")))
+                .collect(Collectors.toList());
+
+        Chat groupChat = new GroupChat(groupName, description, participantsInChat, groupAdmin, new Date());
         return this.chatRepository.save(groupChat);
     }
 
@@ -288,12 +305,15 @@ public class ChatServiceImpl implements ChatService {
             return this.chatRepository.update(chat);
 
         }).orElse(false);
-
-
     }
 
     @Override
-    public Chat sendMessage(User sender, Message message, User receiver) {
+    public Chat sendMessage(String userNameSender, Message message, String userNameReceiver) {
+
+        User sender = this.userService.getUserByUserName(userNameSender)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        User receiver = this.userService.getUserByUserName(userNameReceiver).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         Chat chat = this.findChat(sender, receiver);
 
@@ -327,12 +347,12 @@ public class ChatServiceImpl implements ChatService {
         }).orElse(false);
     }
 
-    @Override
-    public Chat findChat(User user1, User user2) {
+
+    private Chat findChat(User user1, User user2) {
         return this.chatRepository.findAll().stream()
                 .filter(chat -> chat.getParticipants().contains(user1) && chat.getParticipants().contains(user2))
                 .findFirst()
-                .orElseGet(() -> this.createIndividualChat(List.of(user1, user2)));
+                .orElseGet(() -> this.createIndividualChat(List.of(user1.getUserName(), user2.getUserName())));
     }
 
 

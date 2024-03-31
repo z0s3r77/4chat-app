@@ -39,16 +39,16 @@ public class Application {
         // Send Messages
         Message message1 = new TextMessage(carlos, "Hello Raul ", new Date());
 
-        chatService.sendMessage(carlos, message1, raul);
+        chatService.sendMessage(carlos.getUserName(), message1, raul.getUserName());
         Chat carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getFirst();
         int size = carlosChat.getMessages().size();
 
         Message message2 = new TextMessage(raul, "Hello Carlos", new Date());
-        chatService.sendMessage(raul, message2, carlos);
+        chatService.sendMessage(raul.getUserName(), message2, carlos.getUserName());
         carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getFirst();
 
         Message message3 = new TextMessage(carlos, "I'm creating a chat app", new Date());
-        chatService.sendMessage(carlos, message3, raul);
+        chatService.sendMessage(carlos.getUserName(), message3, raul.getUserName());
 
         // Update the first message
         Message messageToUpdate = carlosChat.getMessages().getFirst();
@@ -72,7 +72,7 @@ public class Application {
 
         User malek = userService.createBasicUser("malek", "malek@gmail.com");
         Message message4 = new TextMessage(carlos, "Hello Malek", new Date());
-        chatService.sendMessage(carlos, message4, malek);
+        chatService.sendMessage(carlos.getUserName(), message4, malek.getUserName());
 
         carlosChat = chatService.getChatsFromUser(carlos.getUserName()).get(1);
         Chat malekChat = chatService.getChatsFromUser(malek.getUserName()).getFirst();
@@ -81,7 +81,7 @@ public class Application {
         // Create a group chat
         System.out.println("------- Creating a group chat ----------------");
 
-        Chat groupChat = chatService.createGroupChat(Arrays.asList(carlos, raul, malek), Arrays.asList(carlos), "The Avengers", "The earth's protectors");
+        Chat groupChat = chatService.createGroupChat(Arrays.asList(carlos.getUserName(), raul.getUserName(), malek.getUserName()), Arrays.asList(carlos.getUserName()), "The Avengers", "The earth's protectors");
         carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getLast();
 
         // Send message to the group
