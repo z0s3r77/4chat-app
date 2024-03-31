@@ -22,6 +22,7 @@ public class ChatServiceImpl implements ChatService {
     private static final String CHAT_IS_NOT_GROUP_CHAT = "Chat with id {0} is not a group chat";
     private static final String USER_IS_NOT_ADMIN = "User {0} is not an admin of the group chat";
     private static final String USER_IS_NOT_PARTICIPANT = "User {0} is not a participant of the group chat";
+    private static final String USER_DOES_NOT_EXIST = "User {0} does not exist";
 
 
     public ChatServiceImpl(ChatRepository chatRepository, UserService userService) {
@@ -39,7 +40,7 @@ public class ChatServiceImpl implements ChatService {
 
         List<User> participantsInChat = participantsName.stream()
                 .map(userName -> this.userService.getUserByUserName(userName)
-                        .orElseThrow(() -> new IllegalArgumentException("User not found")))
+                        .orElseThrow(() -> new IllegalArgumentException(String.format(USER_DOES_NOT_EXIST, userName))))
                 .collect(Collectors.toList());
 
         Chat individualChat = new IndividualChat(participantsInChat, new Date());
@@ -66,12 +67,12 @@ public class ChatServiceImpl implements ChatService {
 
         List<User> participantsInChat = participantsName.stream()
                 .map(userName -> this.userService.getUserByUserName(userName)
-                        .orElseThrow(() -> new IllegalArgumentException("User not found")))
+                        .orElseThrow(() -> new IllegalArgumentException(String.format(USER_DOES_NOT_EXIST, userName))))
                 .collect(Collectors.toList());
 
         List<User> groupAdmin = groupAdminNames.stream()
                 .map(userName -> this.userService.getUserByUserName(userName)
-                        .orElseThrow(() -> new IllegalArgumentException("User not found")))
+                        .orElseThrow(() -> new IllegalArgumentException(String.format(USER_DOES_NOT_EXIST, userName))))
                 .collect(Collectors.toList());
 
         Chat groupChat = new GroupChat(groupName, description, participantsInChat, groupAdmin, new Date());
@@ -292,7 +293,7 @@ public class ChatServiceImpl implements ChatService {
             Optional<User> userToAdd = this.userService.getUserByUserName(userName);
 
             if (userToAdd.isEmpty()) {
-                this.logger.log(Level.WARNING, "User {0} does not exist", userName);
+                this.logger.log(Level.WARNING, USER_DOES_NOT_EXIST, userName);
                 return false;
             }
 
@@ -311,9 +312,9 @@ public class ChatServiceImpl implements ChatService {
     public Chat sendMessage(String userNameSender, Message message, String userNameReceiver) {
 
         User sender = this.userService.getUserByUserName(userNameSender)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new IllegalArgumentException(String.format(USER_DOES_NOT_EXIST, userNameSender)));
 
-        User receiver = this.userService.getUserByUserName(userNameReceiver).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User receiver = this.userService.getUserByUserName(userNameReceiver).orElseThrow(() -> new IllegalArgumentException(String.format(USER_DOES_NOT_EXIST, userNameReceiver)));
 
         Chat chat = this.findChat(sender, receiver);
 
