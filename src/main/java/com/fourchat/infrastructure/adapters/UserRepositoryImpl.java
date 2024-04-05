@@ -2,12 +2,14 @@ package com.fourchat.infrastructure.adapters;
 
 import com.fourchat.domain.models.User;
 import com.fourchat.domain.ports.UserRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Repository
 public class UserRepositoryImpl implements UserRepository {
 
     private final List<User> users = new ArrayList<>();

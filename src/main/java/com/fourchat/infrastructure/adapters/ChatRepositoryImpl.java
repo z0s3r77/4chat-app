@@ -2,6 +2,7 @@ package com.fourchat.infrastructure.adapters;
 
 import com.fourchat.domain.models.Chat;
 import com.fourchat.domain.ports.ChatRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+@Repository
 public class ChatRepositoryImpl implements ChatRepository {
 
     private final List<Chat> chats = new ArrayList<>();

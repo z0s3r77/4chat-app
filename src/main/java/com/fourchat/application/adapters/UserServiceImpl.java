@@ -4,9 +4,11 @@ import com.fourchat.domain.models.BasicUser;
 import com.fourchat.domain.models.User;
 import com.fourchat.domain.ports.UserRepository;
 import com.fourchat.domain.ports.UserService;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;

@@ -4,6 +4,7 @@ import com.fourchat.domain.models.*;
 import com.fourchat.domain.ports.ChatRepository;
 import com.fourchat.domain.ports.ChatService;
 import com.fourchat.domain.ports.UserService;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+@Service
 public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
