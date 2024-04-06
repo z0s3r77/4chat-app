@@ -1,4 +1,4 @@
-package com.fourchat.infrastructure.controllers;
+package com.fourchat.infrastructure.controllers.dtos;
 
 import java.util.Date;
 

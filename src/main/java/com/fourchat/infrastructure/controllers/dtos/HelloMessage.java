@@ -1,4 +1,4 @@
-package com.fourchat.infrastructure.controllers;
+package com.fourchat.infrastructure.controllers.dtos;
 
 public class HelloMessage {
 

@@ -3,6 +3,7 @@ package com.fourchat.infrastructure.controllers;
 import com.fourchat.domain.models.Chat;
 import com.fourchat.domain.ports.ChatService;
 import com.fourchat.domain.ports.UserService;
+import com.fourchat.infrastructure.controllers.dtos.HelloMessage;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
