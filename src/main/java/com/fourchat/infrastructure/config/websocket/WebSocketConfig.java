@@ -1,4 +1,4 @@
-package com.fourchat.infrastructure.config;
+package com.fourchat.infrastructure.config.websocket;
 
 
 import jakarta.annotation.PostConstruct;
