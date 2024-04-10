@@ -8,6 +8,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,10 +30,10 @@ public class ChatController {
     }
 
 
-    @PostMapping("/chats/{userName}")
-    public List<Chat> getChatsFromUser(@PathVariable String userName) {
+    @PostMapping("/chats")
+    public List<Chat> getChatsFromUser( Authentication authentication) {
 
-        return null;
+        return chatService.getChatsFromUser(authentication.getName());
     }
 
 
