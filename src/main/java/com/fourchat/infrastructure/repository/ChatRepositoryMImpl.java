@@ -57,8 +57,8 @@ public class ChatRepositoryMImpl implements ChatRepository {
     }
 
     @Override
-    public List<Chat> findByUser(String userName) {
-        return chatDocumentRepository.findByParticipantsContains(userName).stream()
+    public List<Chat> findByUserId(String userName) {
+        return chatDocumentRepository.findChatDocumentsByParticipantsIdsIn(userName).stream()
                 .map(chatDocumentMapper::toChat)
                 .collect(Collectors.toList());
     }

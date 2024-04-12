@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = userRepository.findUserByUserName(userName);
 
         if (user.isPresent()) {
-            return null;
+            return (BasicUser) user.get();
         }
 
         BasicUser basicUser = new BasicUser(userName, userEmail);

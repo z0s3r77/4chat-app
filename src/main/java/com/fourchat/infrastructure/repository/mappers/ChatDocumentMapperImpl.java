@@ -27,7 +27,6 @@ public class ChatDocumentMapperImpl{
 
         if (chat instanceof IndividualChat){
 
-
             ChatDocument chatDocument;
 
             if (chat.getId() == null) {

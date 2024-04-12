@@ -15,7 +15,7 @@ public interface ChatRepository {
 
     List<Chat> findAll();
 
-    List<Chat> findByUser(String userName);
+    List<Chat> findByUserId(String userId);
 
 
 }
