@@ -1,10 +1,31 @@
 package com.fourchat;
 
+import com.fourchat.domain.models.Chat;
+import com.fourchat.domain.models.Message;
+import com.fourchat.domain.models.TextMessage;
+import com.fourchat.domain.models.User;
+import com.fourchat.domain.ports.ChatService;
+import com.fourchat.domain.ports.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.Date;
+import java.util.Optional;
+
 @SpringBootApplication
-public class Application {
+public class Application implements CommandLineRunner {
+
+    private final ChatService chatService;
+    private final UserService userService;
+
+    @Autowired
+    public Application(ChatService chatService, UserService userService) {
+        this.chatService = chatService;
+        this.userService = userService;
+    }
+
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -134,4 +155,29 @@ public class Application {
 
     }
 
+    @Override
+    public void run(String... args) throws Exception {
+
+
+        Optional<User> carlosCreado = userService.getUserByUserName("Carlos");
+        Optional<User> raulCreado = userService.getUserByUserName("Raul");
+
+        User carlos = carlosCreado.get();
+        User raul = raulCreado.get();
+
+        System.out.println("------- Creating a chat between Carlos and Raul ----------------");
+        // Send Messages
+        Message message1 = new TextMessage(carlos, "Hello Raul ", new Date());
+//
+       chatService.sendMessage(carlos.getUserName(), message1, raul.getUserName());
+        Chat carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getFirst();
+        int size = carlosChat.getMessages().size();
+//
+//        Message message2 = new TextMessage(raul, "Hello Carlos", new Date());
+//        chatService.sendMessage(raul.getUserName(), message2, carlos.getUserName());
+//        carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getFirst();
+//
+//        Message message3 = new TextMessage(carlos, "I'm creating a chat app", new Date());
+//        chatService.sendMessage(carlos.getUserName(), message3, raul.getUserName());
+    }
 }

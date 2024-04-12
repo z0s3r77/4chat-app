@@ -10,3 +10,9 @@ services:
       - "8090:8080"
     entrypoint: ["/opt/keycloak/bin/kc.sh", "start-dev"]
 
+
+  mongo:
+    image: mongo:latest
+    container_name: 4chat-mongo
+    ports:
+        - 27017:27017

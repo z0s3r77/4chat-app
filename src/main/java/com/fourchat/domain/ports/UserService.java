@@ -9,4 +9,5 @@ public interface UserService {
 
     BasicUser createBasicUser(String name, String email);
     Optional<User> getUserByUserName(String userName);
+    BasicUser getUserById(String userId);
 }

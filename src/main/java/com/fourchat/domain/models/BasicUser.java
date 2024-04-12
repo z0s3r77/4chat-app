@@ -1,5 +1,10 @@
 package com.fourchat.domain.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+
+@Builder
+@AllArgsConstructor
 public class BasicUser implements User{
 
     private String id;
