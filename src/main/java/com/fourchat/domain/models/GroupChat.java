@@ -64,6 +64,11 @@ public class GroupChat implements Chat {
     }
 
     @Override
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
+    @Override
     public void addMessage(Message message) {
 
         if (this.messages == null) {

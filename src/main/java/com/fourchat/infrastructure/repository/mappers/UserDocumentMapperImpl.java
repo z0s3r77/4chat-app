@@ -31,9 +31,7 @@ public class UserDocumentMapperImpl {
 
         if (userDocument.getType().equals("BasicUser")){
 
-            BasicUser basicUser = new BasicUser(userDocument.getId(), userDocument.getUserName(), userDocument.getEmail());
-
-            return basicUser;
+            return new BasicUser(userDocument.getId(), userDocument.getUserName(), userDocument.getEmail());
 
         } else {
             return null;

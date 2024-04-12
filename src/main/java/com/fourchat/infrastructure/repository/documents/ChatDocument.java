@@ -14,7 +14,7 @@ public class ChatDocument {
     @Id
     private String id;
     private List<String> participantsIds;
-    private List<String> messagesIds;
+    private List<MessageDocument> messages;
     private Date creationDate;
     private int messageCount = 0;
     private String type;

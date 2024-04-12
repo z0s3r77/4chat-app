@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 public class IndividualChat implements Chat{
 
     private String id;
@@ -39,6 +41,14 @@ public class IndividualChat implements Chat{
         return participants;
     }
 
+    public void setParticipants(List<User> participants) {
+        this.participants = participants;
+    }
+
+    public void setMessageCount(int messageCount) {
+        this.messageCount = messageCount;
+    }
+
     @Override
     public void addParticipant(User user) {
         participants.add(user);
@@ -59,20 +69,26 @@ public class IndividualChat implements Chat{
         return messages;
     }
 
+
     @Override
     public Message getLastMessage() {
         return messages.getLast();
     }
 
     @Override
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
+    @Override
     public void addMessage(Message message) {
 
-        if (messages == null) {
-            messages = new ArrayList<>();
+        if (this.messages == null) {
+            this.messages = new ArrayList<>();
         }
 
         message.setId(String.valueOf(messageCount++));
-        messages.add(message);
+        this.messages.add(message);
     }
 
     @Override

@@ -13,6 +13,7 @@ public interface Chat {
     Date getCreationDate();
     List<Message> getMessages();
     Message getLastMessage();
+    void setMessages(List<Message> messages);
     void addMessage(Message message);
     void removeMessage(Message message);
     void updateMessage(Message message);

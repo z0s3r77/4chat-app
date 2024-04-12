@@ -353,9 +353,11 @@ public class ChatServiceImpl implements ChatService {
 
     private Chat findChat(User user1, User user2) {
         return this.chatRepository.findAll().stream()
-                .filter(chat -> chat != null && chat.getParticipants().contains(user1) && chat.getParticipants().contains(user2))
-                .findFirst()
-                .orElseGet(() -> this.createIndividualChat(List.of(user1.getUserName(), user2.getUserName()))); }
+            .filter(chat -> chat.getParticipants().stream().anyMatch(user -> user.getUserName().equals(user1.getUserName()))
+                && chat.getParticipants().stream().anyMatch(user -> user.getUserName().equals(user2.getUserName())))
+            .findFirst()
+            .orElseGet(() -> this.createIndividualChat(List.of(user1.getUserName(), user2.getUserName())));
+    }
 
 
     public Optional<Chat> findChatById(String chatId) {

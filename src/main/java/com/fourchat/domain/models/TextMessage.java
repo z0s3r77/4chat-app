@@ -1,13 +1,15 @@
 package com.fourchat.domain.models;
 
 import java.util.Date;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 public class TextMessage implements Message{
 
     private String id;
-    private final User sender;
+    private User sender;
     private String content;
-    private final Date creationDate;
+    private Date creationDate;
     private boolean updated = false;
 
     public TextMessage(User sender, String content, Date creationDate) {
@@ -29,6 +31,14 @@ public class TextMessage implements Message{
     @Override
     public User getSender() {
         return sender;
+    }
+
+    public void setSender(User sender) {
+        this.sender = sender;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     @Override

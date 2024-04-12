@@ -10,11 +10,11 @@ import java.util.Date;
 @Document(collection = "messages")
 public class MessageDocument {
 
-    @Id
     private String id;
     private String senderId;
     private String content;
     private Date creationDate;
+    private String type;
     private boolean updated = false;
 
 }

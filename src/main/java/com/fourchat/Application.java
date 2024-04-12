@@ -158,7 +158,6 @@ public class Application implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-
         Optional<User> carlosCreado = userService.getUserByUserName("Carlos");
         Optional<User> raulCreado = userService.getUserByUserName("Raul");
 
@@ -170,8 +169,12 @@ public class Application implements CommandLineRunner {
         Message message1 = new TextMessage(carlos, "Hello Raul ", new Date());
 //
        chatService.sendMessage(carlos.getUserName(), message1, raul.getUserName());
-        Chat carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getFirst();
-        int size = carlosChat.getMessages().size();
+
+
+
+  //No funciona el findByName
+//        Chat carlosChat = chatService.getChatsFromUser(carlos.getUserName()).getFirst();
+//        int size = carlosChat.getMessages().size();
 //
 //        Message message2 = new TextMessage(raul, "Hello Carlos", new Date());
 //        chatService.sendMessage(raul.getUserName(), message2, carlos.getUserName());
