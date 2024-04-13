@@ -11,6 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 
@@ -157,54 +158,6 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-
-        User carlos = userService.createBasicUser("Carlos", "user1@email.com");
-        User raul = userService.createBasicUser("Raul", "user2@email.com");
-//
-
-
-        System.out.println("------- Creating a chat between Carlos and Raul ----------------");
-        // Send Messages
-        Message message1 = new TextMessage(carlos, "Hello Raul ", new Date());
-//
-       chatService.sendMessage(carlos.getUserName(), message1, raul.getUserName());
-
-
-
-  //No funciona el findByName
-       Chat carlosChat = chatService.getChatsFromUser(carlos.getId()).getFirst();
-       int size = carlosChat.getMessages().size();
-
-        Message message2 = new TextMessage(raul, "Hello Carlos", new Date());
-        chatService.sendMessage(raul.getUserName(), message2, carlos.getUserName());
-        carlosChat = chatService.getChatsFromUser(carlos.getId()).getFirst();
-
-        Message message3 = new TextMessage(carlos, "I'm creating a chat app", new Date());
-        chatService.sendMessage(carlos.getUserName(), message3, raul.getUserName());
-        //
-//        // Update the first message
-        Message messageToUpdate = carlosChat.getMessages().getFirst();
-        Message messageUpdated = new TextMessage(raul, "Hello Carlos, how are you?", new Date());
-        messageUpdated.setId(messageToUpdate.getId());
-       chatService.updateMessageInChat(carlosChat.getId(), messageUpdated);
-
-       size = carlosChat.getMessages().size();
-        carlosChat = chatService.getChatsFromUser(carlos.getId()).getFirst();
-
-        Message messageToDelete = carlosChat.getMessages().get(2);
-        boolean messageDeleted = chatService.removeMessageFromChat(carlosChat.getId(), messageToDelete.getId());
-        size = carlosChat.getMessages().size();
-        carlosChat = chatService.getChatsFromUser(carlos.getId()).getFirst();
-
-                System.out.println("------- Creating another chat between Carlos and Malek ----------------");
-//
-        User malek = userService.createBasicUser("malek", "malek@gmail.com");
-        Message message4 = new TextMessage(carlos, "Hello Malek", new Date());
-        chatService.sendMessage(carlos.getUserName(), message4, malek.getUserName());
-
-        carlosChat = chatService.getChatsFromUser(carlos.getId()).get(1);
-        Chat malekChat = chatService.getChatsFromUser(malek.getId()).getFirst();
-
 
     }
 }

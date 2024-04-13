@@ -16,15 +16,15 @@ public interface ChatService {
     boolean sendMessage(String chatId, Message message);
     boolean removeMessageFromChat(String chatId, String messageId);
 
-    Chat createGroupChat(List<String> participantsName, List<String> groupAdminNames, String groupName, String description);
+    Chat createGroupChat(List<String> participantsIds, List<String> groupAdminIds, String groupName, String description);
     boolean updateGroupChatDescription(String chatId, String newDescription);
 
     boolean updateGroupChatName(String chatId, String newGroupName);
 
-    boolean removeParticipantFromGroupChat(String chatId, String adminName, String userName);
+    boolean removeParticipantFromGroupChat(String chatId, String adminId, String userId);
 
-    boolean makeParticipantAdmin(String chatId, String adminName, String userName);
+    boolean makeParticipantAdmin(String chatId, String adminId, String userId);
 
-    boolean removeParticipantFromAdmins(String chatId, String adminName, String userName);
-    boolean addParticipantToGroupChat(String chatId, String adminName, String userName);
+    boolean removeParticipantFromAdmins(String chatId, String adminId, String adminIdToRemove);
+    boolean addParticipantToGroupChat(String chatId, String adminId, String userId);
 }
