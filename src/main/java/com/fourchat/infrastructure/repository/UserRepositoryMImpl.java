@@ -7,6 +7,7 @@ import com.fourchat.infrastructure.repository.mongodb.UserDocumentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -31,5 +32,12 @@ public class UserRepositoryMImpl implements UserRepository {
     @Override
     public Optional<User> findById(String userId) {
         return userRepository.findById(userId).map(userDocumentMapper::toUser);
+    }
+
+    @Override
+    public List<User> findByNameContainingIgnoreCase(String name) {
+        return userRepository.findByUserNameContainingIgnoreCase(name).stream()
+                .map(userDocumentMapper::toUser)
+                .toList();
     }
 }

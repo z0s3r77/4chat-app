@@ -6,6 +6,7 @@ import com.fourchat.domain.ports.UserRepository;
 import com.fourchat.domain.ports.UserService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,5 +41,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public BasicUser getUserById(String userId) {
         return (BasicUser) userRepository.findById(userId).orElse(null);
+    }
+
+    @Override
+    public List<User> autocompleteUsersByName(String name) {
+        return userRepository.findByNameContainingIgnoreCase(name);
     }
 }

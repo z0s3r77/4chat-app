@@ -7,9 +7,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.annotation.PostConstruct;
 
 @Configuration
 @EnableWebSecurity
@@ -18,7 +22,33 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
 
+    @PostConstruct
+    public void init() {
+        System.out.println("SecurityConfig loaded");
+    }
+
+
     private JwtAuthenticationConverter jwtAuthenticationConverter;
+
+
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:3000")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
+            }
+        };
+
+    }
+
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -26,11 +56,13 @@ public class SecurityConfig {
 
         return httpSecurity
                 // Disable CSRF
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(CsrfConfigurer::disable)
 
                 // All request must be authenticated
-                .authorizeHttpRequests(http -> http.anyRequest().authenticated())
-
+                .authorizeHttpRequests(http -> http
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/api-doc/**", "/v3/**", "/swagger-ui.html").permitAll()
+                        .anyRequest().authenticated())
 
                 // Use OAuth2 Resource Server
                 // Use jwtAuthenticationConverter to convert jwt token to Spring Security Authentication
@@ -42,5 +74,6 @@ public class SecurityConfig {
                 .build();
 
     }
+
 
 }
