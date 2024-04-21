@@ -3,16 +3,21 @@ package com.fourchat.infrastructure.controllers;
 
 import com.fourchat.domain.models.User;
 import com.fourchat.domain.ports.UserService;
+import com.fourchat.infrastructure.controllers.dtos.UserDto;
+import com.fourchat.infrastructure.controllers.mappers.UserDtoMapper;
 import com.fourchat.infrastructure.controllers.util.ApiConstants;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -21,6 +26,7 @@ import java.util.List;
 public class UserController {
 
     UserService userService;
+    private final UserDtoMapper userDtoMapper;
 
 
     @GetMapping("/autocomplete")
@@ -34,12 +40,21 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<User> getUser(Authentication authentication) {
+    public ResponseEntity<UserDto> getUser(Authentication authentication) {
 
         var jwt = (Jwt) authentication.getPrincipal();
-        var email = (String) jwt.getClaims().get("email");
+        Map<String, Object> claims = jwt.getClaims();
 
-        return ResponseEntity.ok(userService.createBasicUser(authentication.getName(), email));
+        User user = userService.createBasicUser(authentication.getName(), claims.get("email").toString());
+
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        UserDto userDto = userDtoMapper.toUserDto(user, claims);
+
+
+        return ResponseEntity.ok(userDto);
     }
 
 
