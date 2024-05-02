@@ -33,6 +33,14 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    public List<Chat> getChatsIndexFromUser(String userId) {
+
+        List<Chat> chats = this.chatRepository.findByUserId(userId);
+
+        return chats;
+    }
+
+    @Override
     public List<Chat> getChatsFromUser(String userId) {
         return this.chatRepository.findByUserId(userId);
     }

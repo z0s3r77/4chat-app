@@ -60,8 +60,9 @@ public class SecurityConfig {
 
                 // All request must be authenticated
                 .authorizeHttpRequests(http -> http
+                        .requestMatchers("/keycloak/user/create").permitAll()
                         .requestMatchers("/").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/api-doc/**", "/v3/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/api-docs/**", "/v3/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated())
 
                 // Use OAuth2 Resource Server

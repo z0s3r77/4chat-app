@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface ChatService {
 
+    List<Chat> getChatsIndexFromUser(String userId);
+
     List<Chat> getChatsFromUser(String userName);
 
     Chat sendMessage(String userNameSender, Message message, String userNameReceiver);

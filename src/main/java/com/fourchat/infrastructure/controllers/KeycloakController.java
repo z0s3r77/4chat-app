@@ -13,13 +13,11 @@ import java.net.URISyntaxException;
 
 @RestController
 @RequestMapping("/keycloak/user")
-@PreAuthorize("hasRole('admin_client_role')")
 @AllArgsConstructor
 public class KeycloakController {
 
 
     private IKeycloakService keycloakService;
-
 
     @GetMapping("/search")
     public ResponseEntity<?> findAllUsers() {
@@ -48,7 +46,7 @@ public class KeycloakController {
         return ResponseEntity.ok().build();
     }
 
-
+    @PreAuthorize("hasRole('admin_client_role')")
     @DeleteMapping("/delete/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable String userId) {
 

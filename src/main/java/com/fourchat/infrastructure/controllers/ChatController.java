@@ -36,7 +36,8 @@ public class ChatController {
             throw new RuntimeException("User not found");
         }
 
-        return chatService.getChatsFromUser(authentication.getName());
+
+        return chatService.getChatsFromUser(user.get().getId());
     }
 
 
