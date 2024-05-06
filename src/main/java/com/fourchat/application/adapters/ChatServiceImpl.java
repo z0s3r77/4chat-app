@@ -33,6 +33,11 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    public Chat getChatById(String chatId) {
+        return this.chatRepository.findById(chatId).orElseThrow(() -> new IllegalArgumentException("Chat not found"));
+    }
+
+    @Override
     public List<Chat> getChatsIndexFromUser(String userId) {
 
         List<Chat> chats = this.chatRepository.findByUserId(userId);
@@ -43,6 +48,13 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public List<Chat> getChatsFromUser(String userId) {
         return this.chatRepository.findByUserId(userId);
+    }
+
+    @Override
+    public boolean userIsInChat(String chatId, String userId) {
+
+        Optional<Chat> chat = this.chatRepository.findById(chatId);
+        return chat.map(value -> value.getParticipants().stream().anyMatch(user -> user.getId().equals(userId))).orElse(false);
     }
 
 

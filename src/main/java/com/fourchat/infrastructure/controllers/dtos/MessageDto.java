@@ -1,7 +1,12 @@
 package com.fourchat.infrastructure.controllers.dtos;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+
 import java.util.Date;
 
+@Builder
+@AllArgsConstructor
 public class MessageDto {
 
     private String id;

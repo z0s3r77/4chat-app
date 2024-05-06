@@ -60,10 +60,8 @@ public class SecurityConfig {
 
                 // All request must be authenticated
                 .authorizeHttpRequests(http -> http
-                        .requestMatchers("/keycloak/user/create").permitAll()
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/api-docs/**", "/v3/**", "/swagger-ui.html").permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll()
+                )
 
                 // Use OAuth2 Resource Server
                 // Use jwtAuthenticationConverter to convert jwt token to Spring Security Authentication

@@ -47,4 +47,9 @@ public class UserServiceImpl implements UserService {
     public List<User> autocompleteUsersByName(String name) {
         return userRepository.findByNameContainingIgnoreCase(name);
     }
+
+    @Override
+    public User save(User user) {
+        return userRepository.save(user);
+    }
 }

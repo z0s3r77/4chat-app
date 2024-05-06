@@ -22,6 +22,7 @@ public class UserDtoMapper {
                 .lastName( claims.get("family_name").toString())
                 .photoUrl(null)
                 .email(user.getEmail())
+                .description(user.getDescription())
                 .build();
     }
 
