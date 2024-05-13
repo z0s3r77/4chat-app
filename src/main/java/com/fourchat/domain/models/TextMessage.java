@@ -1,9 +1,14 @@
 package com.fourchat.domain.models;
 
 import java.util.Date;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class TextMessage implements Message{
 
     private String id;
@@ -67,7 +72,7 @@ public class TextMessage implements Message{
     }
 
     @Override
-    public boolean updated() {
+    public boolean getUpdated() {
         return updated;
     }
 

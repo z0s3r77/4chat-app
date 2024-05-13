@@ -50,7 +50,7 @@ class SystemTextMessageTest {
     }
 
     @Test
-    void testUpdated() {
-        assertFalse(systemTextMessage.updated());
+    void testGetUpdated() {
+        assertFalse(systemTextMessage.getUpdated());
     }
 }

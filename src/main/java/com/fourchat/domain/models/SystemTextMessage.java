@@ -48,7 +48,7 @@ public class SystemTextMessage implements Message {
     }
 
     @Override
-    public boolean updated() {
+    public boolean getUpdated() {
         return false;
     }
 

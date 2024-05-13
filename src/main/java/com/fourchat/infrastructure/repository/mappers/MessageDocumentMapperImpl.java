@@ -10,8 +10,6 @@ import com.fourchat.infrastructure.repository.documents.MessageDocument;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component
 @AllArgsConstructor
 public class MessageDocumentMapperImpl {
@@ -30,7 +28,7 @@ public class MessageDocumentMapperImpl {
 			messageDocument.setContent(message.getContent());
 			messageDocument.setCreationDate(message.getCreationDate());
 			messageDocument.setType("textMessage");
-			messageDocument.setUpdated(message.updated());
+			messageDocument.setUpdated(message.getUpdated());
 
 			return messageDocument;
 
@@ -42,7 +40,7 @@ public class MessageDocumentMapperImpl {
 			messageDocument.setContent(message.getContent());
 			messageDocument.setCreationDate(message.getCreationDate());
 			messageDocument.setType("SystemTextMessage");
-			messageDocument.setUpdated(message.updated());
+			messageDocument.setUpdated(message.getUpdated());
 
 			return messageDocument;
 

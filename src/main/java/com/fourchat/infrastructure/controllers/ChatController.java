@@ -4,10 +4,11 @@ import com.fourchat.application.adapters.NotificationService;
 import com.fourchat.domain.models.*;
 import com.fourchat.domain.ports.ChatService;
 import com.fourchat.domain.ports.UserService;
-import com.fourchat.infrastructure.controllers.dtos.HelloMessage;
 import com.fourchat.infrastructure.controllers.dtos.MessageDto;
+import com.fourchat.infrastructure.controllers.dtos.SimpleTextMessage;
 import com.fourchat.infrastructure.controllers.util.ApiConstants;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -34,7 +35,6 @@ public class ChatController {
     }
 
 
-
     @GetMapping("/chats")
     public List<Chat> getChatsFromUser(Authentication authentication) {
 
@@ -44,7 +44,7 @@ public class ChatController {
             throw new RuntimeException("User not found");
         }
 
-       // chatService.sendMessage(authentication.getName(), new TextMessage(user.get(), "Hola Alma", new Date()), "alma.barnichou");
+        // chatService.sendMessage(authentication.getName(), new TextMessage(user.get(), "Hola Alma", new Date()), "alma.barnichou");
 
         return chatService.getChatsFromUser(user.get().getId());
     }
@@ -64,6 +64,53 @@ public class ChatController {
 
         return chatService.removeMessageFromChat(chatId, messageId);
     }
+
+    @PostMapping("/message")
+    public Chat sendMessageToChat(@RequestParam String receiver, @RequestBody String content,  Authentication authentication ){
+
+        Optional<User> user = userService.getUserByUserName(authentication.getName());
+
+        if (user.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+        TextMessage message = new TextMessage(user.get(), content, new Date());
+
+        return chatService.sendMessage(authentication.getName(), message, receiver );
+    }
+
+
+
+    // necesitamos el chatId, content , el messageId
+    @PostMapping("/message/update")
+    public boolean updateMessageFromChat(@RequestBody SimpleTextMessage simpleTextMessage, Authentication authentication ){
+
+        Optional<User> user = userService.getUserByUserName(authentication.getName());
+
+        if (user.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+        if (!chatService.userIsInChat(simpleTextMessage.getChatId(), user.get().getId())) {
+            throw new RuntimeException("User is not in chat");
+        }
+
+        Message messageToUpdate = TextMessage.builder()
+                .creationDate(simpleTextMessage.getDate())
+                .id(simpleTextMessage.getMessageId())
+                .content(simpleTextMessage.getContent())
+                .build();
+
+        try {
+            chatService.updateMessageInChat(simpleTextMessage.getChatId(), messageToUpdate);
+            return true;
+        } catch (Exception e){
+            new RuntimeException(e.getMessage());
+            return false;
+        }
+
+    }
+
 
 
 
@@ -91,6 +138,7 @@ public class ChatController {
 
         System.out.println("Message received: " + message.toString());
         System.out.println("Message sended: " + messageSended);
+
 
         return chat;
     }

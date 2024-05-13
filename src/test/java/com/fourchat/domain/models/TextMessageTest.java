@@ -53,9 +53,9 @@ class TextMessageTest {
     }
 
     @Test
-    void testUpdated() {
-        assertFalse(this.textMessage.updated());
+    void testGetUpdated() {
+        assertFalse(this.textMessage.getUpdated());
         this.textMessage.setUpdated(true);
-        assertTrue(this.textMessage.updated());
+        assertTrue(this.textMessage.getUpdated());
     }
 }

@@ -11,7 +11,6 @@ public interface Message {
     public Date getCreationDate();
     void setContent(String content);
     public String toString();
-    public boolean updated();
+    public boolean getUpdated();
     public void setUpdated(boolean updated);
-
 }

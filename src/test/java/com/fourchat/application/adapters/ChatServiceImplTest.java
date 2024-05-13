@@ -588,7 +588,7 @@ class ChatServiceImplTest {
                 .orElse(null);
         assertNotNull(messageInChat, "The message should be found in the chat");
         assertEquals(messageUpdated.getContent(), messageInChat.getContent(), "The message content should be updated");
-        assertTrue(messageInChat.updated(), "The message should be updated");
+        assertTrue(messageInChat.getUpdated(), "The message should be updated");
     }
 
 
@@ -620,7 +620,7 @@ class ChatServiceImplTest {
                 .orElse(null);
         assertNotNull(messageInChat, "The message should be found in the chat");
         assertNotEquals(messageUpdated.getContent(), messageInChat.getContent(), "The message content should not be updated");
-        assertFalse(messageInChat.updated(), "The message should not be updated");
+        assertFalse(messageInChat.getUpdated(), "The message should not be updated");
     }
 
 
