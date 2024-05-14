@@ -11,24 +11,15 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class TranslatorController {
 
-
     TranslatorService translatorService;
 
     @PostMapping("/translate")
     public String translate(@RequestBody TranslateDto translateDto) {
-
-
         try {
-
-             return translatorService.translate(translateDto.text(), translateDto.sourceLanguage(), translateDto.targetLanguage());
-
-        } catch (Exception e){
-
+            return translatorService.translate(translateDto.text(), translateDto.sourceLanguage(), translateDto.targetLanguage());
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
-
-
     }
-
-
 }

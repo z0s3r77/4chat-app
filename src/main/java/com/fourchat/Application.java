@@ -1,19 +1,11 @@
 package com.fourchat;
 
-import com.fourchat.domain.models.Chat;
-import com.fourchat.domain.models.Message;
-import com.fourchat.domain.models.TextMessage;
-import com.fourchat.domain.models.User;
 import com.fourchat.domain.ports.ChatService;
 import com.fourchat.domain.ports.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Optional;
 
 @SpringBootApplication
 public class Application implements CommandLineRunner {
