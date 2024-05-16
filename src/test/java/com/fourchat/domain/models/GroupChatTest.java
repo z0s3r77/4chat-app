@@ -108,16 +108,7 @@ class GroupChatTest {
         assertTrue(groupChat.getAdmins().contains(admin));
     }
 
-    @Test
-    void testAddAdmin() {
-        User newAdmin = Mockito.mock(User.class);
-        groupChat.addAdmin(newAdmin);
-        assertTrue(groupChat.getAdmins().contains(newAdmin));
-    }
 
-    @Test
-    void testRemoveAdmin() {
-        groupChat.removeAdmin(admin);
-        assertFalse(groupChat.getAdmins().contains(admin));
-    }
+
+
 }

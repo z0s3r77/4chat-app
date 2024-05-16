@@ -1,6 +1,6 @@
 package com.fourchat.infrastructure.controllers;
 
-import com.fourchat.application.adapters.NotificationService;
+import com.fourchat.application.NotificationService;
 import com.fourchat.domain.models.*;
 import com.fourchat.domain.ports.ChatService;
 import com.fourchat.domain.ports.UserService;
@@ -8,7 +8,6 @@ import com.fourchat.infrastructure.controllers.dtos.MessageDto;
 import com.fourchat.infrastructure.controllers.dtos.SimpleTextMessage;
 import com.fourchat.infrastructure.controllers.util.ApiConstants;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;

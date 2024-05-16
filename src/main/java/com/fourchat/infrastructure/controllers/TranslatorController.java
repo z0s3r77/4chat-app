@@ -1,6 +1,6 @@
 package com.fourchat.infrastructure.controllers;
 
-import com.fourchat.application.adapters.TranslatorService;
+import com.fourchat.application.TranslatorService;
 import com.fourchat.infrastructure.controllers.dtos.TranslateDto;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

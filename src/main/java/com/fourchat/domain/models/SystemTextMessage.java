@@ -58,6 +58,16 @@ public class SystemTextMessage implements Message {
     }
 
     @Override
+    public void setDeleted(boolean deleted) {
+        // System messages cannot be deleted
+    }
+
+    @Override
+    public boolean getDeleted() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "SimpleTextMessage{" +
                 "id='" + this.id + '\'' +

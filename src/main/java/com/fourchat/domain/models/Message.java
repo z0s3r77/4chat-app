@@ -13,4 +13,6 @@ public interface Message {
     public String toString();
     public boolean getUpdated();
     public void setUpdated(boolean updated);
+    public void setDeleted(boolean deleted);
+    public boolean getDeleted();
 }

@@ -1,4 +1,4 @@
-package com.fourchat.application.adapters;
+package com.fourchat.application;
 
 import com.fourchat.domain.models.*;
 import com.fourchat.domain.ports.ChatRepository;
@@ -78,8 +78,10 @@ public class ChatServiceImpl implements ChatService {
                 .findFirst()
                 .ifPresent(message -> {
                     message.setContent("This message has been removed");
+                    message.setDeleted(true);
                     this.chatRepository.update(chat);
                     messageRemoved.set(true);
+                    chat.notifyParticipants(message);
                 }));
         return messageRemoved.get();
     }
@@ -353,6 +355,7 @@ public class ChatServiceImpl implements ChatService {
                     .ifPresent(message -> {
                         message.setContent(messageUpdated.getContent());
                         message.setUpdated(true);
+                        chat.notifyParticipants(message);
                     });
             this.chatRepository.update(chat);
         });

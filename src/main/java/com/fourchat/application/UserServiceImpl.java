@@ -1,4 +1,4 @@
-package com.fourchat.application.adapters;
+package com.fourchat.application;
 
 import com.fourchat.domain.models.BasicUser;
 import com.fourchat.domain.models.User;

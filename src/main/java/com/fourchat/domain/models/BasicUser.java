@@ -4,6 +4,7 @@ import com.fourchat.domain.ports.NotificationSender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -17,11 +18,9 @@ public class BasicUser implements User {
     private String email;
     private String description;
     private List<String> contacts;
-    private NotificationSender notificationSender;
 
-    public void setNotificationSender(NotificationSender notificationSender) {
-        this.notificationSender = notificationSender;
-    }
+    @Setter
+    private NotificationSender notificationSender;
 
     public BasicUser(String userName, String email) {
         this.userName = userName;

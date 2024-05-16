@@ -21,6 +21,8 @@ public class MessageDtoMapper {
                     .sender(message.getSender().getUserName())
                     .content(message.getContent())
                     .creationDate(message.getCreationDate())
+                    .updated(message.getUpdated())
+                    .deleted(message.getDeleted())
                     .build();
         }
 

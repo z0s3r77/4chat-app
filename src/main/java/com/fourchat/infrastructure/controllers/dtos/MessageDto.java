@@ -2,6 +2,7 @@ package com.fourchat.infrastructure.controllers.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Setter;
 
 import java.util.Date;
 
@@ -15,6 +16,7 @@ public class MessageDto {
     private String receiver;
     private Date creationDate;
     private boolean updated;
+    private boolean deleted;
 
     public MessageDto() {
     }
@@ -66,5 +68,13 @@ public class MessageDto {
 
     public void setUpdated(boolean updated) {
         this.updated = updated;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }
