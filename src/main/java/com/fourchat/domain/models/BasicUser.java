@@ -64,6 +64,7 @@ public class BasicUser implements User {
         }
 
         notificationSender.sendNotification(this.getId(), message);
+        notificationSender.sendNotification(chat, message);
         System.out.println("Chat id : " + chat.getId() + " " + message.getSender().getUserName() + " : " + message.getContent() + "   | id :" + message.getId());
     }
 

@@ -15,4 +15,5 @@ public interface Message {
     public void setUpdated(boolean updated);
     public void setDeleted(boolean deleted);
     public boolean getDeleted();
+    public void setSender(User sender);
 }

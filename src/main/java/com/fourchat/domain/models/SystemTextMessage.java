@@ -68,6 +68,11 @@ public class SystemTextMessage implements Message {
     }
 
     @Override
+    public void setSender(User sender) {
+        // System messages cannot have a different sender
+    }
+
+    @Override
     public String toString() {
         return "SimpleTextMessage{" +
                 "id='" + this.id + '\'' +

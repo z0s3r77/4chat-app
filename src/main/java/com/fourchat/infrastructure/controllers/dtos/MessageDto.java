@@ -12,6 +12,7 @@ public class MessageDto {
 
     private String id;
     private String sender;
+    private String sender_id;
     private String content;
     private String receiver;
     private Date creationDate;
@@ -76,5 +77,13 @@ public class MessageDto {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public String getSender_id() {
+        return sender_id;
+    }
+
+    public void setSender_id(String sender_id) {
+        this.sender_id = sender_id;
     }
 }

@@ -19,6 +19,7 @@ public class MessageDtoMapper {
             return MessageDto.builder()
                     .id(message.getId())
                     .sender(message.getSender().getUserName())
+                    .sender_id(message.getSender().getId())
                     .content(message.getContent())
                     .creationDate(message.getCreationDate())
                     .updated(message.getUpdated())

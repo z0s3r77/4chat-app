@@ -1,5 +1,6 @@
 package com.fourchat.application;
 
+import com.fourchat.domain.models.Chat;
 import com.fourchat.domain.models.Message;
 import com.fourchat.domain.models.TextMessage;
 import com.fourchat.domain.ports.NotificationSender;
@@ -26,6 +27,14 @@ public class NotificationService implements NotificationSender {
         if (message instanceof TextMessage){
 
             messagingTemplate.convertAndSend("/topic/notifications/" + userId, messageDtoMapper.messageDtoMapper(message));
+        }
+    }
+
+    @Override
+    public void sendNotification(Chat chat, Message message) {
+        if (message instanceof TextMessage){
+
+            messagingTemplate.convertAndSend("/topic/chat/"+chat.getId(), messageDtoMapper.messageDtoMapper(message));
         }
     }
 }
