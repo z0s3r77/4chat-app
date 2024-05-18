@@ -34,10 +34,10 @@ class UserServiceImplTest {
         String userName = "user1";
         String userEmail = "user1@example.com";
         when(userRepository.findUserByUserName(userName)).thenReturn(Optional.empty());
-        BasicUser newUser = new BasicUser(userName, userEmail);
+        BasicUser newUser = new BasicUser(userName, userEmail, null, null);
         when(userRepository.save(any(User.class))).thenReturn(newUser);
 
-        BasicUser result = userService.createBasicUser(userName, userEmail);
+        BasicUser result = userService.createBasicUser(userName, userEmail, null, null);
 
         assertNotNull(result);
         assertEquals(userName, result.getUserName());
@@ -49,10 +49,10 @@ class UserServiceImplTest {
     void createBasicUser_userExists_returnsExistingUser() {
         String userName = "user1";
         String userEmail = "user1@example.com";
-        BasicUser existingUser = new BasicUser(userName, userEmail);
+        BasicUser existingUser = new BasicUser(userName, userEmail, null, null);
         when(userRepository.findUserByUserName(userName)).thenReturn(Optional.of(existingUser));
 
-        BasicUser result = userService.createBasicUser(userName, userEmail);
+        BasicUser result = userService.createBasicUser(userName, userEmail, null, null);
 
         assertNotNull(result);
         assertEquals(existingUser, result);
@@ -63,7 +63,7 @@ class UserServiceImplTest {
     @Test
     void getUserByUserName_existingUser_returnsUser() {
         String userName = "user1";
-        BasicUser existingUser = new BasicUser(userName, "user1@example.com");
+        BasicUser existingUser = new BasicUser(userName, "user1@example.com", null, null);
         when(userRepository.findUserByUserName(userName)).thenReturn(Optional.of(existingUser));
 
         Optional<User> result = userService.getUserByUserName(userName);
@@ -87,7 +87,7 @@ class UserServiceImplTest {
     @Test
     void getUserById_existingUser_returnsUser() {
         String userId = "user1";
-        BasicUser existingUser = new BasicUser("user1", "user1@example.com");
+        BasicUser existingUser = new BasicUser("user1", "user1@example.com", null, null);
         when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
 
         BasicUser result = userService.getUserById(userId);
@@ -111,7 +111,7 @@ class UserServiceImplTest {
     @Test
     void autocompleteUsersByName_existingUsers_returnsUsers() {
         String name = "user";
-        List<User> users = List.of(new BasicUser("user1", "user1@example.com"), new BasicUser("user2", "user2@example.com"));
+        List<User> users = List.of(new BasicUser("user1", "user1@example.com",null,null), new BasicUser("user2", "user2@example.com", null, null));
         when(userRepository.findByNameContainingIgnoreCase(name)).thenReturn(users);
 
         List<User> result = userService.autocompleteUsersByName(name);
@@ -123,7 +123,7 @@ class UserServiceImplTest {
 
     @Test
     void save_user_returnsSavedUser() {
-        User user = new BasicUser("user1", "user1@example.com");
+        User user = new BasicUser("user1", "user1@example.com", null, null);
         when(userRepository.save(user)).thenReturn(user);
 
         User result = userService.save(user);

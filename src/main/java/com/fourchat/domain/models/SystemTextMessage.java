@@ -11,7 +11,7 @@ public class SystemTextMessage implements Message {
 
 
     public SystemTextMessage(String content, Date creationDate) {
-        this.sender = new BasicUser("System", "system");
+        this.sender = new BasicUser("System", "system", null, null);
         this.content = content;
         this.creationDate = creationDate;
     }

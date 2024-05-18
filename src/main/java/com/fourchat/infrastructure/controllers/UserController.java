@@ -48,7 +48,7 @@ public class UserController {
         var jwt = (Jwt) authentication.getPrincipal();
         Map<String, Object> claims = jwt.getClaims();
 
-        User user = userService.createBasicUser(authentication.getName(), claims.get("email").toString());
+        User user = userService.createBasicUser(authentication.getName(), claims.get("email").toString(), claims.get("given_name").toString(), claims.get("family_name").toString());
 
         if (user == null) {
             throw new RuntimeException("User not found");
@@ -60,13 +60,13 @@ public class UserController {
     }
 
 
-@PostMapping("/user/addContact")
+    @PostMapping("/user/addContact")
     public ResponseEntity<User> addContact(@RequestParam("contactId") String contactId, Authentication authentication) {
 
         var jwt = (Jwt) authentication.getPrincipal();
         Map<String, Object> claims = jwt.getClaims();
 
-        User user = userService.createBasicUser(authentication.getName(), claims.get("email").toString());
+        User user = userService.createBasicUser(authentication.getName(), claims.get("email").toString(), claims.get("given_name").toString(), claims.get("family_name").toString());
 
         if (user == null) {
             throw new RuntimeException("User not found");
@@ -85,7 +85,7 @@ public class UserController {
         var jwt = (Jwt) authentication.getPrincipal();
         Map<String, Object> claims = jwt.getClaims();
 
-        User user = userService.createBasicUser(authentication.getName(), claims.get("email").toString());
+        User user = userService.createBasicUser(authentication.getName(), claims.get("email").toString(), claims.get("given_name").toString(), claims.get("family_name").toString());
 
         if (user == null) {
             throw new RuntimeException("User not found");
@@ -97,5 +97,19 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
+    @PostMapping("/user")
+    public ResponseEntity<User> saveUser(@RequestBody UserDto userDto) {
+
+        User user = userService.getUserById(userDto.getId());
+
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        User updatedUser = userDtoMapper.toUser(userDto);
+        updatedUser.setContacts(user.getContacts());
+
+        return ResponseEntity.ok(userService.save(updatedUser));
+    }
 
 }

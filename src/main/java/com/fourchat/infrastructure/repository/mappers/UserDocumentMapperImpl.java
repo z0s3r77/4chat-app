@@ -30,11 +30,16 @@ public class UserDocumentMapperImpl implements ApplicationContextAware {
 
             UserDocument userDocument = new UserDocument();
             userDocument.setId(user.getId());
+            userDocument.setFirstName(((BasicUser) user).getFirstName());
+            userDocument.setLastName(((BasicUser) user).getLastName());
             userDocument.setUserName(user.getUserName());
             userDocument.setEmail(user.getEmail());
             userDocument.setType("BasicUser");
             userDocument.setDescription(user.getDescription());
             userDocument.setContacts(user.getContacts());
+            userDocument.setLinkedIn(((BasicUser) user).getLinkedIn());
+            userDocument.setTwitter(((BasicUser) user).getTwitter());
+            userDocument.setFacebook(((BasicUser) user).getFacebook());
             return userDocument;
 
         } else {
@@ -47,10 +52,10 @@ public class UserDocumentMapperImpl implements ApplicationContextAware {
         if (userDocument.getType().equals("BasicUser")){
 
             if (userDocument.getContacts() == null){
-                return new BasicUser(userDocument.getId(), userDocument.getUserName(), userDocument.getEmail(), userDocument.getDescription(), new ArrayList<>(), null);
+                return new BasicUser(userDocument.getId(), userDocument.getUserName(), userDocument.getFirstName(), userDocument.getLastName(), userDocument.getEmail(), userDocument.getDescription(), new ArrayList<>() , userDocument.getLinkedIn(), userDocument.getTwitter(), userDocument.getFacebook(), userDocument.getPhotoUrl(), null);
             }
 
-            return new BasicUser(userDocument.getId(), userDocument.getUserName(), userDocument.getEmail(), userDocument.getDescription(), userDocument.getContacts(), null );
+            return new BasicUser(userDocument.getId(), userDocument.getUserName(), userDocument.getFirstName(), userDocument.getLastName(), userDocument.getEmail(), userDocument.getDescription(), userDocument.getContacts(), userDocument.getLinkedIn(), userDocument.getTwitter(), userDocument.getFacebook(),userDocument.getPhotoUrl(), null );
 
         } else {
             return null;

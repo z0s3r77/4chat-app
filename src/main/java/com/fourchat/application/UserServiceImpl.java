@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public BasicUser createBasicUser(String userName, String userEmail) {
+    public BasicUser createBasicUser(String userName, String email, String firstName, String lastName) {
 
         Optional<User> user = userRepository.findUserByUserName(userName);
 
@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
             return (BasicUser) user.get();
         }
 
-        BasicUser basicUser = new BasicUser(userName, userEmail);
+        BasicUser basicUser = new BasicUser(userName, email, firstName, lastName);
 
         return (BasicUser) userRepository.save(basicUser);
     }

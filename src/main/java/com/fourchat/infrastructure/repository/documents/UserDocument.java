@@ -15,9 +15,15 @@ public class UserDocument {
     @Id
     private String id;
     private String userName;
+    private String firstName;
+    private String lastName;
     private String email;
+    private String photoUrl;
     private String type;
     private String description;
     private List<String> contacts;
+    private String linkedIn;
+    private String twitter;
+    private String facebook;
 
 }

@@ -17,5 +17,8 @@ public class UserDto {
     private String email;
     private String description;
     private List<UserDto> contacts;
+    private String linkedIn;
+    private String twitter;
+    private String facebook;
 
 }
