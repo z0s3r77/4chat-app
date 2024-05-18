@@ -2,7 +2,6 @@ package com.fourchat.infrastructure.repository.mappers;
 
 import com.fourchat.domain.models.BasicUser;
 import com.fourchat.domain.models.User;
-import com.fourchat.domain.ports.UserService;
 import com.fourchat.infrastructure.repository.documents.UserDocument;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationContext;
@@ -10,8 +9,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
@@ -26,7 +23,7 @@ public class UserDocumentMapperImpl implements ApplicationContextAware {
 
     public UserDocument toUserDocument(User user) {
 
-        if (user instanceof BasicUser){
+        if (user instanceof BasicUser) {
 
             UserDocument userDocument = new UserDocument();
             userDocument.setId(user.getId());
@@ -40,6 +37,7 @@ public class UserDocumentMapperImpl implements ApplicationContextAware {
             userDocument.setLinkedIn(((BasicUser) user).getLinkedIn());
             userDocument.setTwitter(((BasicUser) user).getTwitter());
             userDocument.setFacebook(((BasicUser) user).getFacebook());
+            userDocument.setPhotoUrl(((BasicUser) user).getPhotoUrl());
             return userDocument;
 
         } else {
@@ -49,13 +47,13 @@ public class UserDocumentMapperImpl implements ApplicationContextAware {
 
     public User toUser(UserDocument userDocument) {
 
-        if (userDocument.getType().equals("BasicUser")){
+        if (userDocument.getType().equals("BasicUser")) {
 
-            if (userDocument.getContacts() == null){
-                return new BasicUser(userDocument.getId(), userDocument.getUserName(), userDocument.getFirstName(), userDocument.getLastName(), userDocument.getEmail(), userDocument.getDescription(), new ArrayList<>() , userDocument.getLinkedIn(), userDocument.getTwitter(), userDocument.getFacebook(), userDocument.getPhotoUrl(), null);
+            if (userDocument.getContacts() == null) {
+                return new BasicUser(userDocument.getId(), userDocument.getUserName(), userDocument.getFirstName(), userDocument.getLastName(), userDocument.getEmail(), userDocument.getDescription(), new ArrayList<>(), userDocument.getLinkedIn(), userDocument.getTwitter(), userDocument.getFacebook(), userDocument.getPhotoUrl(), null);
             }
 
-            return new BasicUser(userDocument.getId(), userDocument.getUserName(), userDocument.getFirstName(), userDocument.getLastName(), userDocument.getEmail(), userDocument.getDescription(), userDocument.getContacts(), userDocument.getLinkedIn(), userDocument.getTwitter(), userDocument.getFacebook(),userDocument.getPhotoUrl(), null );
+            return new BasicUser(userDocument.getId(), userDocument.getUserName(), userDocument.getFirstName(), userDocument.getLastName(), userDocument.getEmail(), userDocument.getDescription(), userDocument.getContacts(), userDocument.getLinkedIn(), userDocument.getTwitter(), userDocument.getFacebook(), userDocument.getPhotoUrl(), null);
 
         } else {
             return null;
