@@ -17,7 +17,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-class NotificationServiceTest {
+class NotificationServiceImplTest {
 
     @Mock
     private SimpMessagingTemplate messagingTemplate;
@@ -26,7 +26,7 @@ class NotificationServiceTest {
     private MessageDtoMapper messageDtoMapper;
 
     @InjectMocks
-    private NotificationService notificationService;
+    private NotificationServiceImpl notificationServiceImpl;
 
     @BeforeEach
     void setUp() {
@@ -39,7 +39,7 @@ class NotificationServiceTest {
         Message textMessage = new TextMessage(any(), "Hello", new Date());
         MessageDto messageDto = new MessageDto();  // Crea una instancia de MessageDto        when(messageDtoMapper.messageDtoMapper(textMessage)).thenReturn(messageDto);
         when(messageDtoMapper.messageDtoMapper(textMessage)).thenReturn(messageDto);
-        notificationService.sendNotification(userId, textMessage);
+        notificationServiceImpl.sendNotification(userId, textMessage);
 
         verify(messageDtoMapper).messageDtoMapper(textMessage);
         verify(messagingTemplate).convertAndSend("/topic/notifications/" + userId, messageDto);
@@ -50,7 +50,7 @@ class NotificationServiceTest {
         String userId = "user123";
         Message nonTextMessage = mock(Message.class); // Mock a non-TextMessage type
 
-        notificationService.sendNotification(userId, nonTextMessage);
+        notificationServiceImpl.sendNotification(userId, nonTextMessage);
 
         verify(messageDtoMapper, never()).messageDtoMapper(any());
         verify(messagingTemplate, never()).convertAndSend(anyString(), Optional.ofNullable(any()));

@@ -1,7 +1,7 @@
 package com.fourchat.infrastructure.repository.mappers;
 
 import com.fourchat.domain.models.*;
-import com.fourchat.domain.ports.NotificationSender;
+import com.fourchat.domain.ports.NotificationService;
 import com.fourchat.domain.ports.UserService;
 import com.fourchat.infrastructure.repository.documents.ChatDocument;
 import com.fourchat.infrastructure.repository.documents.MessageDocument;
@@ -18,7 +18,7 @@ public class ChatDocumentMapperImpl {
 
     private final UserService userService;
     private final ChatDocumentRepository chatDocumentRepository;
-    private final NotificationSender notificationSender;
+    private final NotificationService notificationService;
 
 
     public ChatDocument toChatDocument(Chat chat) {
@@ -113,7 +113,7 @@ public class ChatDocumentMapperImpl {
                     .map(userService::getUserById)
                     .map(user -> {
                         if (user instanceof BasicUser) {
-                            ((BasicUser) user).setNotificationSender(notificationSender);
+                            ((BasicUser) user).setNotificationService(notificationService);
                         }
                         return user;
                     })
@@ -139,7 +139,7 @@ public class ChatDocumentMapperImpl {
                     .map(userService::getUserById)
                     .map(user -> {
                         if (user instanceof BasicUser) {
-                            ((BasicUser) user).setNotificationSender(notificationSender);
+                            ((BasicUser) user).setNotificationService(notificationService);
                         }
                         return user;
                     })

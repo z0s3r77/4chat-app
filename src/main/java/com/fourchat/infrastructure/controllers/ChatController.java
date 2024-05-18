@@ -1,6 +1,6 @@
 package com.fourchat.infrastructure.controllers;
 
-import com.fourchat.application.NotificationService;
+import com.fourchat.application.NotificationServiceImpl;
 import com.fourchat.domain.models.*;
 import com.fourchat.domain.ports.ChatService;
 import com.fourchat.domain.ports.UserService;
@@ -26,7 +26,7 @@ public class ChatController {
 
     private ChatService chatService;
     private UserService userService;
-    private NotificationService notificationService;
+    private NotificationServiceImpl notificationServiceImpl;
 
     @GetMapping
     public Chat getChatById(@RequestParam String chatId) {
@@ -126,7 +126,7 @@ public class ChatController {
         User user = userOptional.get();
 
         if (user instanceof BasicUser) {
-            ((BasicUser) user).setNotificationSender(notificationService);
+            ((BasicUser) user).setNotificationService(notificationServiceImpl);
         }
 
         TextMessage messageText = new TextMessage(user, message.getContent(), new Date());

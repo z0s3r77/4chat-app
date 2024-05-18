@@ -1,6 +1,6 @@
 package com.fourchat.domain.models;
 
-import com.fourchat.domain.ports.NotificationSender;
+import com.fourchat.domain.ports.NotificationService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +20,7 @@ public class BasicUser implements User {
     private List<String> contacts;
 
     @Setter
-    private NotificationSender notificationSender;
+    private NotificationService notificationService;
 
     public BasicUser(String userName, String email) {
         this.userName = userName;
@@ -58,13 +58,13 @@ public class BasicUser implements User {
     @Override
     public void onMessageReceived(Chat chat, Message message) {
 
-        if (notificationSender == null) {
+        if (notificationService == null) {
             System.out.println("Notification sender is null");
             return;
         }
 
-        notificationSender.sendNotification(this.getId(), message);
-        notificationSender.sendNotification(chat, message);
+        notificationService.sendNotification(this.getId(), message);
+        notificationService.sendNotification(chat, message);
         System.out.println("Chat id : " + chat.getId() + " " + message.getSender().getUserName() + " : " + message.getContent() + "   | id :" + message.getId());
     }
 
