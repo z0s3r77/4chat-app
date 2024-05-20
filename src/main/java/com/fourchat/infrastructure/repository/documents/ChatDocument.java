@@ -21,5 +21,6 @@ public class ChatDocument {
     private String groupName;
     private String description;
     private List<String> adminsIds;
+    private List<String> deletedByUsers;
 
 }

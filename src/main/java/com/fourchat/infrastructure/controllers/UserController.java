@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.ws.rs.QueryParam;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -31,6 +32,15 @@ public class UserController {
         return userService.getUserById(userId);
     }
 
+    @GetMapping("/get-user-by-username")
+    public Optional<User> getUserByUsername(@RequestParam("username") String username) {
+        return userService.getUserByUserName(username);
+    }
+
+    @DeleteMapping("/delete-contact")
+    public boolean deleteUser(@RequestParam("userId") String userId, @RequestParam String userIdToDelete) {
+        return userService.deleteUserFromContacts(userId, userIdToDelete);
+    }
 
     @GetMapping("/autocomplete")
     public List<User> autocompleteUsersByName(@RequestParam("name") String name, Authentication authentication) {

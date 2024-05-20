@@ -47,7 +47,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public List<Chat> getChatsFromUser(String userId) {
-        return this.chatRepository.findByUserId(userId);
+        return this.chatRepository.findByUserId(userId).stream().filter(chat -> chat.getDeletedByUsers() == null || !chat.getDeletedByUsers().contains(userId)).collect(Collectors.toList());
     }
 
     @Override
@@ -84,6 +84,20 @@ public class ChatServiceImpl implements ChatService {
                     chat.notifyParticipants(message);
                 }));
         return messageRemoved.get();
+    }
+
+    @Override
+    public boolean deleteChat(String chatId, String userId) {
+
+        return this.chatRepository.findById(chatId).map(chat -> {
+            if (chat.getParticipants().stream().anyMatch(user -> user.getId().equals(userId))) {
+                chat.addDeletedByUser(userId);
+                this.chatRepository.save(chat);
+                return true;
+            }
+            return false;
+        }).orElse(false);
+
     }
 
     @Override
@@ -364,6 +378,11 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public boolean sendMessage(String chatId, Message message) {
         return this.chatRepository.findById(chatId).map(chat -> {
+
+            if (chat.getParticipants().size() == 2){
+                chat.setDeletedByUsers(List.of());
+            }
+
             chat.addMessage(message);
             chat.notifyParticipants(message);
             this.chatRepository.save(chat);

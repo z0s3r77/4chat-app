@@ -14,12 +14,27 @@ public class IndividualChat implements Chat{
     private List<Message> messages;
     private Date creationDate;
     private int messageCount = 0;
+    private List<String> deletedByUsers;
 
     public IndividualChat( List<User> participants, Date creationDate) {
 
         this.messages = new ArrayList<>();
         this.creationDate = creationDate;
         this.participants = new ArrayList<>(participants);
+        this.deletedByUsers = new ArrayList<>();
+    }
+
+    public List<String> getDeletedByUsers() {
+        return deletedByUsers;
+    }
+
+    @Override
+    public void addDeletedByUser(String userId) {
+        deletedByUsers.add(userId);
+    }
+
+    public void setDeletedByUsers(List<String> deletedByUsers) {
+        this.deletedByUsers = deletedByUsers;
     }
 
     @Override
@@ -56,7 +71,12 @@ public class IndividualChat implements Chat{
 
     @Override
     public void removeParticipant(User user) {
-        participants.remove(user);
+
+        participants.stream()
+                .filter(participant -> participant.getId().equals(user.getId()))
+                .findFirst()
+                .ifPresent(participants::remove);
+
     }
 
     @Override

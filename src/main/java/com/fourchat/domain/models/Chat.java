@@ -18,6 +18,8 @@ public interface Chat {
     void removeMessage(Message message);
     void updateMessage(Message message);
     void notifyParticipants(Message message);
-
+    List<String> getDeletedByUsers();
+    void addDeletedByUser(String userId);
+    void setDeletedByUsers(List<String> deletedByUsers);
 
 }

@@ -49,6 +49,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean deleteUserFromContacts(String userId, String userIdToDelete) {
+
+        BasicUser user = (BasicUser) userRepository.findById(userId).orElse(null);
+
+        if (user == null) {
+            return false;
+        }
+
+        if (user.removeContact(userIdToDelete)){
+            userRepository.save(user);
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    @Override
     public User save(User user) {
         return userRepository.save(user);
     }

@@ -52,6 +52,8 @@ public class ChatDocumentMapperImpl {
 
             chatDocument.setType("individual");
 
+            chatDocument.setDeletedByUsers(((IndividualChat) chat).getDeletedByUsers());
+
             return chatDocument;
 
         } else if (chat instanceof GroupChat) {
@@ -88,6 +90,8 @@ public class ChatDocumentMapperImpl {
 
             chatDocument.setDescription(((GroupChat) chat).getDescription());
             chatDocument.setGroupName(((GroupChat) chat).getGroupName());
+
+            chatDocument.setDeletedByUsers(((GroupChat) chat).getDeletedByUsers());
 
             return chatDocument;
 
@@ -127,6 +131,8 @@ public class ChatDocumentMapperImpl {
 
             individualChat.setMessageCount(chatDocument.getMessageCount());
 
+            individualChat.setDeletedByUsers(chatDocument.getDeletedByUsers());
+
             return individualChat;
 
         } else if (chatDocument.getType().equals("group")) {
@@ -157,6 +163,8 @@ public class ChatDocumentMapperImpl {
 
             groupChat.setDescription(chatDocument.getDescription());
             groupChat.setGroupName(chatDocument.getGroupName());
+
+            groupChat.setDeletedByUsers(chatDocument.getDeletedByUsers());
 
             return groupChat;
         } else {

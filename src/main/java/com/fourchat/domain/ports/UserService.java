@@ -15,5 +15,7 @@ public interface UserService {
 
     List<User> autocompleteUsersByName(String name);
 
+    boolean deleteUserFromContacts(String userId, String userIdToDelete);
+
     User save(User user);
 }

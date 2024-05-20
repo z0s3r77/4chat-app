@@ -21,5 +21,6 @@ public interface User {
     String getLinkedIn();
     void setContacts(List<String> contacts);
     void onMessageReceived(Chat chat, Message message);
+    boolean removeContact(String userId);
 
 }

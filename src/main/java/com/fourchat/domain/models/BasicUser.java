@@ -96,6 +96,12 @@ public class BasicUser implements User {
         System.out.println("Chat id : " + chat.getId() + " " + message.getSender().getUserName() + " : " + message.getContent() + "   | id :" + message.getId());
     }
 
+    @Override
+    public boolean removeContact(String userId) {
+
+        return this.contacts.remove(userId);
+    }
+
     public String getLastName() {
         return lastName;
     }

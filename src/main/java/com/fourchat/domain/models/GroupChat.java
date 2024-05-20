@@ -15,6 +15,8 @@ public class GroupChat implements Chat {
     private List<Message> messages;
     private Date creationDate;
     private int messageCount = 0;
+    private List<String> deletedByUsers;
+
 
     public GroupChat(String groupName, String description, List<User> participants, List<User> admins, Date creationDate) {
         this.groupName = groupName;
@@ -22,6 +24,21 @@ public class GroupChat implements Chat {
         this.participants = new ArrayList<>(participants);
         this.admins = new ArrayList<>(admins);
         this.creationDate = creationDate;
+        this.deletedByUsers = new ArrayList<>();
+    }
+
+
+    public List<String> getDeletedByUsers() {
+        return deletedByUsers;
+    }
+
+    @Override
+    public void addDeletedByUser(String userId) {
+        deletedByUsers.add(userId);
+    }
+
+    public void setDeletedByUsers(List<String> deletedByUsers) {
+        this.deletedByUsers = deletedByUsers;
     }
 
     @Override

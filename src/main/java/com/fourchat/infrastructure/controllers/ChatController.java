@@ -33,6 +33,17 @@ public class ChatController {
         return chatService.getChatById(chatId);
     }
 
+    @DeleteMapping("/delete")
+    public boolean deleteChat(@RequestParam String chatId, Authentication authentication) {
+
+        Optional<User> user = userService.getUserByUserName(authentication.getName());
+
+        if (user.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+        return chatService.deleteChat(chatId, user.get().getId());
+    }
 
     @GetMapping("/chats")
     public List<Chat> getChatsFromUser(Authentication authentication) {
@@ -63,6 +74,9 @@ public class ChatController {
 
         return chatService.removeMessageFromChat(chatId, messageId);
     }
+
+
+
 
     @PostMapping("/message")
     public Chat sendMessageToChat(@RequestParam String receiver, @RequestBody String content,  Authentication authentication ){

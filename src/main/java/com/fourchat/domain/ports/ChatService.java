@@ -22,6 +22,8 @@ public interface ChatService {
     boolean sendMessage(String chatId, Message message);
     boolean removeMessageFromChat(String chatId, String messageId);
 
+    boolean deleteChat(String chatId, String userId);
+
     Chat createGroupChat(List<String> participantsIds, List<String> groupAdminIds, String groupName, String description);
     boolean updateGroupChatDescription(String chatId, String newDescription);
 
