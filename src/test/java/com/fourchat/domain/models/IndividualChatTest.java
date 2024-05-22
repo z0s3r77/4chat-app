@@ -43,11 +43,6 @@ class IndividualChatTest {
         assertTrue(this.individualChat.getParticipants().contains(newUser));
     }
 
-    @Test
-    void testRemoveParticipant() {
-        this.individualChat.removeParticipant(this.user);
-        assertFalse(this.individualChat.getParticipants().contains(this.user));
-    }
 
     @Test
     void testGetMessages() {

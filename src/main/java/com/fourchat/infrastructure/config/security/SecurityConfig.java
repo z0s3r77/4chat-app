@@ -1,6 +1,8 @@
 package com.fourchat.infrastructure.config.security;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -18,14 +20,18 @@ import javax.annotation.PostConstruct;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@AllArgsConstructor
 public class SecurityConfig {
+
+
+    @Value("${4chat.frontend.url}")
+    private String frontendUrl;
 
     @PostConstruct
     public void init() {
         System.out.println("SecurityConfig loaded");
     }
 
+    @Autowired
     private JwtAuthenticationConverter jwtAuthenticationConverter;
 
     @Bean
@@ -39,7 +45,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000")
+                        .allowedOrigins(frontendUrl)
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
