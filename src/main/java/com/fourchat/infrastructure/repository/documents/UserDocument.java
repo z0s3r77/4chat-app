@@ -25,5 +25,7 @@ public class UserDocument {
     private String linkedIn;
     private String twitter;
     private String facebook;
+    private List<String> pendingContactRequests;
+
 
 }

@@ -38,6 +38,7 @@ public class UserDocumentMapperImpl implements ApplicationContextAware {
             userDocument.setTwitter(((BasicUser) user).getTwitter());
             userDocument.setFacebook(((BasicUser) user).getFacebook());
             userDocument.setPhotoUrl(((BasicUser) user).getPhotoUrl());
+            userDocument.setPendingContactRequests(((BasicUser) user).getPendingContactRequests());
             return userDocument;
 
         } else {
@@ -50,10 +51,10 @@ public class UserDocumentMapperImpl implements ApplicationContextAware {
         if (userDocument.getType().equals("BasicUser")) {
 
             if (userDocument.getContacts() == null) {
-                return new BasicUser(userDocument.getId(), userDocument.getUserName(), userDocument.getFirstName(), userDocument.getLastName(), userDocument.getEmail(), userDocument.getDescription(), new ArrayList<>(), userDocument.getLinkedIn(), userDocument.getTwitter(), userDocument.getFacebook(), userDocument.getPhotoUrl(), null);
+                return new BasicUser(userDocument.getId(), userDocument.getUserName(), userDocument.getFirstName(), userDocument.getLastName(), userDocument.getEmail(), userDocument.getDescription(), new ArrayList<>(), userDocument.getLinkedIn(), userDocument.getTwitter(), userDocument.getFacebook(), userDocument.getPhotoUrl(),userDocument.getPendingContactRequests(),null);
             }
 
-            return new BasicUser(userDocument.getId(), userDocument.getUserName(), userDocument.getFirstName(), userDocument.getLastName(), userDocument.getEmail(), userDocument.getDescription(), userDocument.getContacts(), userDocument.getLinkedIn(), userDocument.getTwitter(), userDocument.getFacebook(), userDocument.getPhotoUrl(), null);
+            return new BasicUser(userDocument.getId(), userDocument.getUserName(), userDocument.getFirstName(), userDocument.getLastName(), userDocument.getEmail(), userDocument.getDescription(), userDocument.getContacts(), userDocument.getLinkedIn(), userDocument.getTwitter(), userDocument.getFacebook(), userDocument.getPhotoUrl(), userDocument.getPendingContactRequests(), null);
 
         } else {
             return null;

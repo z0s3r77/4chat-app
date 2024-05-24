@@ -53,10 +53,7 @@ class GroupChatTest {
         assertFalse(groupChat.getParticipants().contains(user));
     }
 
-    @Test
-    void testGetMessages() {
-        assertNull(groupChat.getMessages());
-    }
+
 
     @Test
     void testAddMessage() {

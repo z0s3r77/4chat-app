@@ -22,5 +22,9 @@ public interface User {
     void setContacts(List<String> contacts);
     void onMessageReceived(Chat chat, Message message);
     boolean removeContact(String userId);
+    List<String> getPendingContactRequests();
+    void addPendingContactRequest(String user);
+    void approveContactRequest(String user);
+    void rejectContactRequest(String user);
 
 }

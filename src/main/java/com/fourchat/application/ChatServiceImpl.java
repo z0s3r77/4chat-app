@@ -385,6 +385,10 @@ public class ChatServiceImpl implements ChatService {
 
         Chat chat = this.findChat(sender, receiver);
 
+        if (chat.getParticipants().size() == 2){
+            chat.setDeletedByUsers(List.of());
+        }
+
         chat.addMessage(message);
         chat.notifyParticipants(message);
 

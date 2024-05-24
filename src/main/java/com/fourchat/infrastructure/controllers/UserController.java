@@ -14,9 +14,11 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.QueryParam;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -69,9 +71,8 @@ public class UserController {
         return contacts;
     }
 
-
-    @PostMapping("/user/addContact")
-    public ResponseEntity<User> addContact(@RequestParam("contactId") String contactId, Authentication authentication) {
+    @PostMapping("/user/deletePendingContact")
+    public ResponseEntity<User> deletePendingContact(@RequestParam("contactId") String contactId, Authentication authentication) {
 
         var jwt = (Jwt) authentication.getPrincipal();
         Map<String, Object> claims = jwt.getClaims();
@@ -82,8 +83,76 @@ public class UserController {
             throw new RuntimeException("User not found");
         }
 
-        user.addContact(contactId);
+        user.rejectContactRequest(contactId);
         userService.save(user);
+
+        return ResponseEntity.ok(user);
+    }
+
+
+    @PostMapping("/user/approveContact")
+    public ResponseEntity<User> approveContact(@RequestParam("contactId") String contactId, Authentication authentication) {
+
+        var jwt = (Jwt) authentication.getPrincipal();
+        Map<String, Object> claims = jwt.getClaims();
+
+        User user = userService.createBasicUser(authentication.getName(), claims.get("email").toString(), claims.get("given_name").toString(), claims.get("family_name").toString());
+
+        User contact = userService.getUserById(contactId);
+
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        user.approveContactRequest(contactId);
+        userService.save(user);
+
+        contact.addContact(user.getId());
+        userService.save(contact);
+
+        return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/user/get-pending-contacts")
+    public List<User> getPendingContacts(Authentication authentication) {
+
+        var jwt = (Jwt) authentication.getPrincipal();
+        Map<String, Object> claims = jwt.getClaims();
+
+        User user = userService.createBasicUser(authentication.getName(), claims.get("email").toString(), claims.get("given_name").toString(), claims.get("family_name").toString());
+
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        List<User> contacts = Optional.ofNullable(user.getPendingContactRequests())
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(contactId -> userService.getUserById(contactId))
+                .collect(Collectors.toList());
+
+
+        return contacts;
+    }
+
+
+
+    @PostMapping("/user/addContact")
+    public ResponseEntity<User> addContact(@RequestParam("contactId") String contactId, Authentication authentication) {
+
+        var jwt = (Jwt) authentication.getPrincipal();
+        Map<String, Object> claims = jwt.getClaims();
+
+        User user = userService.createBasicUser(authentication.getName(), claims.get("email").toString(), claims.get("given_name").toString(), claims.get("family_name").toString());
+
+        User contact = userService.getUserById(contactId);
+
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        contact.addPendingContactRequest(user.getId());
+        userService.save(contact);
 
         return ResponseEntity.ok(user);
     }

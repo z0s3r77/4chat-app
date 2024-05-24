@@ -19,6 +19,46 @@ public class BasicUser implements User {
     private String lastName;
     private String email;
     private String description;
+    private List<String> contacts;
+    private String linkedIn;
+    private String twitter;
+    private String facebook;
+    private String photoUrl;
+    private List<String> pendingContactRequests;
+
+    @Override
+    public List<String> getPendingContactRequests() {
+        return pendingContactRequests;
+    }
+
+    @Override
+    public void addPendingContactRequest(String user) {
+        if (this.pendingContactRequests == null) {
+            this.pendingContactRequests = new java.util.ArrayList<>();
+        }
+
+        if (!this.pendingContactRequests.contains(user)) {
+            this.pendingContactRequests.add(user);
+        }
+    }
+
+    @Override
+    public void approveContactRequest(String user) {
+        if (this.pendingContactRequests.contains(user)) {
+            this.pendingContactRequests.remove(user);
+            this.addContact(user);
+        }
+    }
+
+    @Override
+    public void rejectContactRequest(String user) {
+
+        if (this.pendingContactRequests.contains(user)) {
+            this.pendingContactRequests.remove(user);
+        }
+
+    }
+
 
     public List<String> getContacts() {
         return contacts;
@@ -28,11 +68,7 @@ public class BasicUser implements User {
         this.contacts = contacts;
     }
 
-    private List<String> contacts;
-    private String linkedIn;
-    private String twitter;
-    private String facebook;
-    private String photoUrl;
+
 
     @Setter
     private NotificationService notificationService;
