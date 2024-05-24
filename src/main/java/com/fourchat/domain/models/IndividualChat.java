@@ -38,6 +38,26 @@ public class IndividualChat implements Chat{
     }
 
     @Override
+    public String getGroupName() {
+        return "";
+    }
+
+    @Override
+    public String getDescription() {
+        return "";
+    }
+
+    @Override
+    public List<User> getAdmins() {
+        return List.of();
+    }
+
+    @Override
+    public int getMessageCount() {
+        return 0;
+    }
+
+    @Override
     public String getId() {
         return id;
     }

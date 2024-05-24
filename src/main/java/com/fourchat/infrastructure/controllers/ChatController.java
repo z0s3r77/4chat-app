@@ -4,10 +4,13 @@ import com.fourchat.application.NotificationServiceImpl;
 import com.fourchat.domain.models.*;
 import com.fourchat.domain.ports.ChatService;
 import com.fourchat.domain.ports.UserService;
+import com.fourchat.infrastructure.controllers.dtos.GroupChatDto;
 import com.fourchat.infrastructure.controllers.dtos.MessageDto;
+import com.fourchat.infrastructure.controllers.dtos.NewGroupDto;
 import com.fourchat.infrastructure.controllers.dtos.SimpleTextMessage;
 import com.fourchat.infrastructure.controllers.util.ApiConstants;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -21,6 +24,7 @@ import java.util.Optional;
 @RestController
 @AllArgsConstructor
 @RequestMapping(ApiConstants.CHAT_URL)
+@Slf4j
 public class ChatController {
 
 
@@ -122,6 +126,36 @@ public class ChatController {
             return false;
         }
 
+    }
+
+
+    @GetMapping("/group")
+    public List<GroupChatDto> getGroupChatsFromUser(Authentication authentication) {
+
+        Optional<User> user = userService.getUserByUserName( authentication.getName());
+
+        if (user.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+        List<Chat> chats = chatService.getGroupChatsFromUser(user.get().getId());
+
+        return GroupChatDto.from(chats);
+    }
+
+
+
+
+    @PostMapping("/group/create")
+    public Chat createGroupChat(@RequestBody NewGroupDto groupDto, Authentication authentication) {
+
+        Optional<User> user = userService.getUserByUserName(authentication.getName());
+
+        if (user.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+        return chatService.createGroupChat(groupDto.participantsIds(), groupDto.groupAdminIds(), groupDto.groupName(), groupDto.description());
     }
 
 

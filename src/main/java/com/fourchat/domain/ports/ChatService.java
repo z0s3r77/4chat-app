@@ -20,11 +20,13 @@ public interface ChatService {
     void updateMessageInChat(String chatId, Message messageUpdated);
 
     boolean sendMessage(String chatId, Message message);
+
     boolean removeMessageFromChat(String chatId, String messageId);
 
     boolean deleteChat(String chatId, String userId);
 
     Chat createGroupChat(List<String> participantsIds, List<String> groupAdminIds, String groupName, String description);
+
     boolean updateGroupChatDescription(String chatId, String newDescription);
 
     boolean updateGroupChatName(String chatId, String newGroupName);
@@ -34,5 +36,9 @@ public interface ChatService {
     boolean makeParticipantAdmin(String chatId, String adminId, String userId);
 
     boolean removeParticipantFromAdmins(String chatId, String adminId, String adminIdToRemove);
+
     boolean addParticipantToGroupChat(String chatId, String adminId, String userId);
+
+    List<Chat> getGroupChatsFromUser(String userId);
+
 }

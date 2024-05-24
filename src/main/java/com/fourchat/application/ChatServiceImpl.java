@@ -4,6 +4,8 @@ import com.fourchat.domain.models.*;
 import com.fourchat.domain.ports.ChatRepository;
 import com.fourchat.domain.ports.ChatService;
 import com.fourchat.domain.ports.UserService;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -20,6 +22,8 @@ public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
     private final UserService userService;
     private final Logger logger = Logger.getLogger(ChatServiceImpl.class.getName());
+
+
 
     private static final String CHAT_IS_NOT_GROUP_CHAT = "Chat with id {0} is not a group chat";
     private static final String USER_IS_NOT_ADMIN = "User {0} is not an admin of the group chat";
@@ -47,7 +51,11 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public List<Chat> getChatsFromUser(String userId) {
-        return this.chatRepository.findByUserId(userId).stream().filter(chat -> chat.getDeletedByUsers() == null || !chat.getDeletedByUsers().contains(userId)).collect(Collectors.toList());
+        return this.chatRepository.findByUserId(userId)
+                .stream()
+                .filter(chat -> chat.getDeletedByUsers() == null || !chat.getDeletedByUsers().contains(userId))
+                .filter(chat -> chat instanceof IndividualChat)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -111,7 +119,14 @@ public class ChatServiceImpl implements ChatService {
                 .map(id -> this.userService.getUserById(id))
                 .collect(Collectors.toList());
 
+        participantsInChat.addAll(groupAdmin);
+        participantsInChat = participantsInChat.stream().distinct().collect(Collectors.toList());
+
         Chat groupChat = new GroupChat(groupName, description, participantsInChat, groupAdmin, new Date());
+        Message message = new SystemTextMessage("Grupo creado", new Date());
+        groupChat.addMessage(message);
+        groupChat.notifyParticipants(message);
+
         return this.chatRepository.save(groupChat);
     }
 
@@ -342,6 +357,22 @@ public class ChatServiceImpl implements ChatService {
             return this.chatRepository.update(chat);
 
         }).orElse(false);
+    }
+
+
+    @Override
+    public List<Chat> getGroupChatsFromUser(String userId) {
+        logger.info("Fetching group chats for user: " + userId);
+        try {
+            List<Chat> chats = this.chatRepository.findByUserId(userId).stream()
+                    .filter(chat -> chat instanceof GroupChat)
+                    .collect(Collectors.toList());
+            logger.info("Found " + chats.size() + " group chats for user: " + userId);
+            return chats;
+        } catch (Exception e) {
+            logger.info("Error fetching group chats for user: " + userId + " " + e.getMessage());
+            throw e; // O manejar la excepción de otra manera adecuada
+        }
     }
 
     @Override

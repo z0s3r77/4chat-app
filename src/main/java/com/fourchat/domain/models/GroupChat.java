@@ -1,6 +1,8 @@
 package com.fourchat.domain.models;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.*;
 
@@ -8,15 +10,25 @@ import java.util.*;
 public class GroupChat implements Chat {
 
     private String id;
+    @Getter
+    @Setter
     private String groupName;
+    @Getter
+    @Setter
     private String description;
-    private List<User> participants;
-    private List<User> admins;
-    private List<Message> messages;
+    @Setter
+    private List<User> participants = new ArrayList<>();
+    @Getter
+    @Setter
+    private List<User> admins = new ArrayList<>();
+    private List<Message> messages = new ArrayList<>();
+    @Setter
     private Date creationDate;
+    @Setter
     private int messageCount = 0;
-    private List<String> deletedByUsers;
-
+    @Getter
+    @Setter
+    private List<String> deletedByUsers = new ArrayList<>();
 
     public GroupChat(String groupName, String description, List<User> participants, List<User> admins, Date creationDate) {
         this.groupName = groupName;
@@ -27,18 +39,14 @@ public class GroupChat implements Chat {
         this.deletedByUsers = new ArrayList<>();
     }
 
-
-    public List<String> getDeletedByUsers() {
-        return deletedByUsers;
-    }
-
     @Override
     public void addDeletedByUser(String userId) {
         deletedByUsers.add(userId);
     }
 
-    public void setDeletedByUsers(List<String> deletedByUsers) {
-        this.deletedByUsers = deletedByUsers;
+    @Override
+    public int getMessageCount() {
+        return this.messageCount;
     }
 
     @Override
@@ -80,7 +88,7 @@ public class GroupChat implements Chat {
 
     @Override
     public Message getLastMessage() {
-        return this.messages.getLast();
+        return this.messages.get(this.messages.size() - 1);
     }
 
     @Override
@@ -90,11 +98,9 @@ public class GroupChat implements Chat {
 
     @Override
     public void addMessage(Message message) {
-
         if (this.messages == null) {
             this.messages = new ArrayList<>();
         }
-
         message.setId(String.valueOf(this.messageCount++));
         this.messages.add(message);
     }
@@ -118,49 +124,10 @@ public class GroupChat implements Chat {
 
     @Override
     public void notifyParticipants(Message message) {
-
         this.participants.stream()
                 .filter(user -> !user.equals(message.getSender()))
                 .forEach(user -> user.onMessageReceived(this, message));
     }
-
-    public String getGroupName() {
-        return this.groupName;
-    }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<User> getAdmins() {
-        return this.admins;
-    }
-
-    public void setAdmins(List<User> admins) {
-        this.admins = admins;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public void setMessageCount(int messageCount) {
-        this.messageCount = messageCount;
-    }
-
-    public void setParticipants(List<User> participants) {
-        this.participants = participants;
-    }
-
-
 
     public void addAdmin(User admin) {
         User adminToAdd = this.participants.stream()
@@ -183,5 +150,4 @@ public class GroupChat implements Chat {
             this.admins.remove(adminToRemove);
         }
     }
-
 }

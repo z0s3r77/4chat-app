@@ -21,5 +21,9 @@ public interface Chat {
     List<String> getDeletedByUsers();
     void addDeletedByUser(String userId);
     void setDeletedByUsers(List<String> deletedByUsers);
+    String getGroupName();
+    String getDescription();
+    List<User> getAdmins();
+    int getMessageCount();
 
 }
