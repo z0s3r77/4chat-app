@@ -169,6 +169,17 @@ public class ChatController {
     }
 
 
+    @PostMapping("/group/delete")
+    public boolean deleteGroupChat(@RequestParam String groupId, Authentication authentication) {
+
+        Optional<User> user = userService.getUserByUserName(authentication.getName());
+
+        if (user.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+        return chatService.exitFromGroupChat(groupId, user.get().getId());
+    }
 
 
 
@@ -187,6 +198,11 @@ public class ChatController {
         if (user instanceof BasicUser) {
             ((BasicUser) user).setNotificationService(notificationServiceImpl);
         }
+
+        if (!chatService.userIsInChat(chatId, user.getId())) {
+            throw new RuntimeException("User is not in chat");
+        }
+
 
         TextMessage messageText = new TextMessage(user, message.getContent(), new Date());
 

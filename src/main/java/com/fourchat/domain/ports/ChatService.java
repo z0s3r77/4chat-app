@@ -38,9 +38,12 @@ public interface ChatService {
 
     void removeParticipantFromAdmins(String chatId, String adminId, String adminIdToRemove);
 
+    boolean exitFromGroupChat(String chatId, String userId);
+
     void addParticipantToGroupChat(String chatId, String adminId, String userId);
 
     List<Chat> getGroupChatsFromUser(String userId);
 
     boolean updateGroupChat(GroupDto groupDto,String adminId, String groupId);
+
 }

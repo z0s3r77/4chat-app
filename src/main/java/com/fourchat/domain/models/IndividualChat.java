@@ -147,6 +147,11 @@ public class IndividualChat implements Chat{
     }
 
     @Override
+    public void exitFromGroupChat(String userId) {
+        // Do nothing
+    }
+
+    @Override
     public void notifyParticipants(Message message) {
         for (User user : participants) {
             if (user.equals(message.getSender())) {

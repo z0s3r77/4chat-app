@@ -17,6 +17,7 @@ public interface Chat {
     void addMessage(Message message);
     void removeMessage(Message message);
     void updateMessage(Message message);
+    void exitFromGroupChat(String userId);
     void notifyParticipants(Message message);
     List<String> getDeletedByUsers();
     void addDeletedByUser(String userId);

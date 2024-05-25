@@ -123,6 +123,21 @@ public class GroupChat implements Chat {
     }
 
     @Override
+    public void exitFromGroupChat(String userId) {
+
+        User userToRemove = this.participants.stream()
+                .filter(user -> user.getId().equals(userId))
+                .findFirst()
+                .orElse(null);
+
+        if (userToRemove != null) {
+            this.participants.remove(userToRemove);
+        }
+
+
+    }
+
+    @Override
     public void notifyParticipants(Message message) {
         this.participants.stream()
                 .filter(user -> !user.equals(message.getSender()))

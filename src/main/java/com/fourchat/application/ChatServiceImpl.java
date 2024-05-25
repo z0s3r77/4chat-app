@@ -3,6 +3,7 @@ package com.fourchat.application;
 import com.fourchat.domain.models.*;
 import com.fourchat.domain.ports.ChatRepository;
 import com.fourchat.domain.ports.ChatService;
+import com.fourchat.domain.ports.NotificationService;
 import com.fourchat.domain.ports.UserService;
 import com.fourchat.infrastructure.controllers.dtos.GroupDto;
 
@@ -18,10 +19,11 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
-public class ChatServiceImpl implements ChatService {
+public class  ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
     private final UserService userService;
+    private final NotificationService notificationService;
     private final Logger logger = Logger.getLogger(ChatServiceImpl.class.getName());
 
 
@@ -31,9 +33,10 @@ public class ChatServiceImpl implements ChatService {
     private static final String USER_DOES_NOT_EXIST = "User {0} does not exist";
 
 
-    public ChatServiceImpl(ChatRepository chatRepository, UserService userService) {
+    public ChatServiceImpl(ChatRepository chatRepository, UserService userService, NotificationService notificationService) {
         this.userService = userService;
         this.chatRepository = chatRepository;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -85,7 +88,7 @@ public class ChatServiceImpl implements ChatService {
                 .filter(message -> message.getId().equals(messageId))
                 .findFirst()
                 .ifPresent(message -> {
-                    message.setContent("This message has been removed");
+                    message.setContent("Se ha eliminado este mensaje");
                     message.setDeleted(true);
                     this.chatRepository.update(chat);
                     messageRemoved.set(true);
@@ -124,6 +127,19 @@ public class ChatServiceImpl implements ChatService {
 
         Chat groupChat = new GroupChat(groupName, description, participantsInChat, groupAdmin, new Date());
         Message message = new SystemTextMessage("Grupo creado", new Date());
+
+
+        participantsInChat.stream().forEach(user -> {
+
+            if (user instanceof BasicUser) {
+                ((BasicUser) user).setNotificationService(notificationService);
+            }
+
+            Message messageForUser = new SystemTextMessage("Te han añadido a : " + groupChat.getGroupName(), new Date());
+            user.onMessageReceived(groupChat, messageForUser);
+
+        });
+
         groupChat.addMessage(message);
         groupChat.notifyParticipants(message);
 
@@ -146,7 +162,7 @@ public class ChatServiceImpl implements ChatService {
 
             groupChat.setDescription(newDescription);
 
-            Message message = new SystemTextMessage("Group description updated", new Date());
+            Message message = new SystemTextMessage("Descripción del grupo actualizada", new Date());
             groupChat.addMessage(message);
             groupChat.notifyParticipants(message);
 
@@ -166,7 +182,7 @@ public class ChatServiceImpl implements ChatService {
                 throw new IllegalArgumentException("Chat is not a group chat");
             }
             groupChat.setGroupName(newGroupName);
-            Message message = new SystemTextMessage("Group title updated", new Date());
+            Message message = new SystemTextMessage("Título del grupo actualizado", new Date());
             groupChat.addMessage(message);
             groupChat.notifyParticipants(message);
             Chat savedChat = this.chatRepository.save(chat);
@@ -212,8 +228,19 @@ public class ChatServiceImpl implements ChatService {
                 return false;
             }
 
+            User user = this.userService.getUserById(userId);
+
             groupChat.removeParticipant(userToRemove);
-            Message message = new SystemTextMessage(userId + " removed from the group", new Date());
+            Message message = new SystemTextMessage(user.getUserName() + " ha sido eliminado del grupo", new Date());
+
+            if (user instanceof BasicUser) {
+                ((BasicUser) user).setNotificationService(notificationService);
+            }
+
+            Message messageForUser = new SystemTextMessage("Te han eliminado de: " + groupChat.getGroupName(), new Date());
+            user.onMessageReceived(chat, messageForUser);
+
+
             groupChat.addMessage(message);
             groupChat.notifyParticipants(message);
 
@@ -258,8 +285,10 @@ public class ChatServiceImpl implements ChatService {
                 return false;
             }
 
+            User user = this.userService.getUserById(userId);
+
             groupChat.addAdmin(userToMakeAdmin);
-            Message message = new SystemTextMessage(userId + " is new Admin ", new Date());
+            Message message = new SystemTextMessage(user.getUserName() + " ascendido a Administrador ", new Date());
             groupChat.addMessage(message);
             groupChat.notifyParticipants(message);
 
@@ -304,8 +333,10 @@ public class ChatServiceImpl implements ChatService {
                 return false;
             }
 
+            User user = this.userService.getUserById(adminIdToRemove);
+
             groupChat.removeAdmin(userToDeleteFromAdmins);
-            Message message = new SystemTextMessage(adminIdToRemove + " is removed from admins ", new Date());
+            Message message = new SystemTextMessage(user.getUserName() + " eliminado de los administradores ", new Date());
             groupChat.addMessage(message);
             groupChat.notifyParticipants(message);
 
@@ -314,6 +345,42 @@ public class ChatServiceImpl implements ChatService {
         });
 
 
+    }
+
+    @Override
+    public boolean exitFromGroupChat(String chatId, String userId) {
+
+        this.chatRepository.findById(chatId).map(chat -> {
+
+            GroupChat groupChat;
+
+            try {
+                groupChat = (GroupChat) chat;
+            } catch (ClassCastException e) {
+                this.logger.log(Level.WARNING, CHAT_IS_NOT_GROUP_CHAT, chatId);
+                return false;
+            }
+
+            User userToRemove = groupChat.getParticipants().stream()
+                    .filter(user -> user.getId().equals(userId))
+                    .findFirst()
+                    .orElse(null);
+
+            if (userToRemove == null) {
+                this.logger.log(Level.WARNING, USER_IS_NOT_PARTICIPANT, userId);
+                return false;
+            }
+
+            groupChat.exitFromGroupChat(userId);
+            Message message = new SystemTextMessage(userToRemove.getUserName() + "  ha salido del grupo ", new Date());
+            groupChat.addMessage(message);
+            groupChat.notifyParticipants(message);
+
+            return this.chatRepository.update(chat);
+
+        });
+
+        return false;
     }
 
     @Override
@@ -349,7 +416,18 @@ public class ChatServiceImpl implements ChatService {
 
             groupChat.addParticipant(userToAdd.get());
 
-            Message message = new SystemTextMessage(userId + " added to the group", new Date());
+            User user = this.userService.getUserById(userId);
+
+
+            Message message = new SystemTextMessage(user.getUserName() + " ha sido añadido al grupo", new Date());
+
+            if (user instanceof BasicUser) {
+                ((BasicUser) user).setNotificationService(notificationService);
+            }
+
+            Message messageForUser = new SystemTextMessage("Te han añadido a " + groupChat.getGroupName(), new Date());
+            user.onMessageReceived(chat, messageForUser);
+
             groupChat.addMessage(message);
             groupChat.notifyParticipants(message);
 
@@ -438,6 +516,7 @@ public class ChatServiceImpl implements ChatService {
             return false;
         }
     }
+
 
     @Override
     public Chat sendMessage(String userNameSender, Message message, String userNameReceiver) {

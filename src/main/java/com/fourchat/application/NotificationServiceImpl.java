@@ -2,8 +2,10 @@ package com.fourchat.application;
 
 import com.fourchat.domain.models.Chat;
 import com.fourchat.domain.models.Message;
+import com.fourchat.domain.models.SystemTextMessage;
 import com.fourchat.domain.models.TextMessage;
 import com.fourchat.domain.ports.NotificationService;
+import com.fourchat.infrastructure.controllers.dtos.SimpleTextMessage;
 import com.fourchat.infrastructure.controllers.mappers.MessageDtoMapper;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -27,7 +29,11 @@ public class NotificationServiceImpl implements NotificationService {
         if (message instanceof TextMessage){
 
             messagingTemplate.convertAndSend("/topic/notifications/" + userId, messageDtoMapper.messageDtoMapper(message));
+        } else if (message instanceof SystemTextMessage){
+
+            messagingTemplate.convertAndSend("/topic/notifications/" + userId, messageDtoMapper.messageDtoMapper(message));
         }
+
     }
 
     @Override
