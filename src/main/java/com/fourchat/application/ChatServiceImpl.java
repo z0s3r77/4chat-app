@@ -4,9 +4,10 @@ import com.fourchat.domain.models.*;
 import com.fourchat.domain.ports.ChatRepository;
 import com.fourchat.domain.ports.ChatService;
 import com.fourchat.domain.ports.UserService;
-import org.slf4j.LoggerFactory;
+import com.fourchat.infrastructure.controllers.dtos.GroupDto;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -22,7 +23,6 @@ public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
     private final UserService userService;
     private final Logger logger = Logger.getLogger(ChatServiceImpl.class.getName());
-
 
 
     private static final String CHAT_IS_NOT_GROUP_CHAT = "Chat with id {0} is not a group chat";
@@ -131,9 +131,9 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public boolean updateGroupChatDescription(String chatId, String newDescription) {
+    public void updateGroupChatDescription(String chatId, String newDescription) {
 
-        return this.chatRepository.findById(chatId).map(chat -> {
+        this.chatRepository.findById(chatId).map(chat -> {
 
             GroupChat groupChat;
 
@@ -152,36 +152,35 @@ public class ChatServiceImpl implements ChatService {
 
             return this.chatRepository.update(chat);
 
-        }).orElse(false);
+        });
     }
 
     @Override
-    public boolean updateGroupChatName(String chatId, String newGroupName) {
-        return this.chatRepository.findById(chatId).map(chat -> {
-
+    public void updateGroupChatName(String chatId, String newGroupName) {
+        this.chatRepository.findById(chatId).map(chat -> {
             GroupChat groupChat;
-
             try {
                 groupChat = (GroupChat) chat;
             } catch (ClassCastException e) {
                 this.logger.log(Level.WARNING, CHAT_IS_NOT_GROUP_CHAT, chatId);
-                return false;
+                throw new IllegalArgumentException("Chat is not a group chat");
             }
-
             groupChat.setGroupName(newGroupName);
             Message message = new SystemTextMessage("Group title updated", new Date());
             groupChat.addMessage(message);
             groupChat.notifyParticipants(message);
-
-            return this.chatRepository.update(chat);
-
-        }).orElse(false);
+            Chat savedChat = this.chatRepository.save(chat);
+            if (savedChat == null) {
+                throw new RuntimeException("Failed to save updated group chat");
+            }
+            return savedChat;
+        }).orElseThrow(() -> new IllegalArgumentException("Chat with id " + chatId + " not found"));
     }
 
     @Override
-    public boolean removeParticipantFromGroupChat(String chatId, String adminId, String userId) {
+    public void removeParticipantFromGroupChat(String chatId, String adminId, String userId) {
 
-        return this.chatRepository.findById(chatId).map(chat -> {
+        this.chatRepository.findById(chatId).map(chat -> {
 
             GroupChat groupChat;
 
@@ -220,14 +219,14 @@ public class ChatServiceImpl implements ChatService {
 
             return this.chatRepository.update(chat);
 
-        }).orElse(false);
+        });
 
     }
 
     @Override
-    public boolean makeParticipantAdmin(String chatId, String adminId, String userId) {
+    public void makeParticipantAdmin(String chatId, String adminId, String userId) {
 
-        return this.chatRepository.findById(chatId).map(chat -> {
+        this.chatRepository.findById(chatId).map(chat -> {
 
             GroupChat groupChat;
 
@@ -266,14 +265,14 @@ public class ChatServiceImpl implements ChatService {
 
             return this.chatRepository.update(chat);
 
-        }).orElse(false);
+        });
 
     }
 
     @Override
-    public boolean removeParticipantFromAdmins(String chatId, String adminId, String adminIdToRemove) {
+    public void removeParticipantFromAdmins(String chatId, String adminId, String adminIdToRemove) {
 
-        return this.chatRepository.findById(chatId).map(chat -> {
+        this.chatRepository.findById(chatId).map(chat -> {
 
             GroupChat groupChat;
 
@@ -312,15 +311,15 @@ public class ChatServiceImpl implements ChatService {
 
             return this.chatRepository.update(chat);
 
-        }).orElse(false);
+        });
 
 
     }
 
     @Override
-    public boolean addParticipantToGroupChat(String chatId, String adminId, String userId) {
+    public void addParticipantToGroupChat(String chatId, String adminId, String userId) {
 
-        return this.chatRepository.findById(chatId).map(chat -> {
+        this.chatRepository.findById(chatId).map(chat -> {
 
             GroupChat groupChat;
 
@@ -356,7 +355,7 @@ public class ChatServiceImpl implements ChatService {
 
             return this.chatRepository.update(chat);
 
-        }).orElse(false);
+        });
     }
 
 
@@ -376,6 +375,71 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    public boolean updateGroupChat(GroupDto groupUpdated, String adminId, String groupId) {
+        try {
+            return Boolean.TRUE.equals(this.chatRepository.findById(groupId).map(chat -> {
+                GroupChat groupChat;
+
+                try {
+                    groupChat = (GroupChat) chat;
+                } catch (ClassCastException e) {
+                    this.logger.log(Level.WARNING, CHAT_IS_NOT_GROUP_CHAT, groupId);
+                    return false;
+                }
+
+                String groupName = chat.getGroupName();
+                String groupNameUpdated = groupUpdated.groupName();
+
+                if (!groupName.equals(groupNameUpdated)) {
+                    updateGroupChatName(groupId, groupNameUpdated);
+                }
+
+                String description = chat.getDescription();
+                String descriptionUpdated = groupUpdated.description();
+
+                if (!description.equals(descriptionUpdated)) {
+                    updateGroupChatDescription(groupId, descriptionUpdated);
+                }
+
+                List<String> currentAdminIds = chat.getAdmins().stream().map(User::getId).toList();
+                List<String> updatedAdminIds = groupUpdated.groupAdminIds();
+
+                for (String updatedAdminId : updatedAdminIds) {
+                    if (!currentAdminIds.contains(updatedAdminId)) {
+                        makeParticipantAdmin(groupId, adminId, updatedAdminId);
+                    }
+                }
+
+                for (String currentAdminId : currentAdminIds) {
+                    if (!updatedAdminIds.contains(currentAdminId)) {
+                        removeParticipantFromAdmins(groupId, adminId, currentAdminId);
+                    }
+                }
+
+                List<String> currentParticipantIds = chat.getParticipants().stream().map(User::getId).toList();
+                List<String> updatedParticipantIds = groupUpdated.participantsIds();
+
+                for (String updatedParticipantId : updatedParticipantIds) {
+                    if (!currentParticipantIds.contains(updatedParticipantId)) {
+                        addParticipantToGroupChat(groupId, adminId, updatedParticipantId);
+                    }
+                }
+
+                for (String currentParticipantId : currentParticipantIds) {
+                    if (!updatedParticipantIds.contains(currentParticipantId)) {
+                        removeParticipantFromGroupChat(groupId, adminId, currentParticipantId);
+                    }
+                }
+
+               return true;
+            }).orElse(null));
+        } catch (Exception e) {
+            this.logger.log(Level.SEVERE, "Error updating group chat", e);
+            return false;
+        }
+    }
+
+    @Override
     public Chat sendMessage(String userNameSender, Message message, String userNameReceiver) {
 
         User sender = this.userService.getUserByUserName(userNameSender)
@@ -385,7 +449,7 @@ public class ChatServiceImpl implements ChatService {
 
         Chat chat = this.findChat(sender, receiver);
 
-        if (chat.getParticipants().size() == 2){
+        if (chat.getParticipants().size() == 2) {
             chat.setDeletedByUsers(List.of());
         }
 
@@ -414,7 +478,7 @@ public class ChatServiceImpl implements ChatService {
     public boolean sendMessage(String chatId, Message message) {
         return this.chatRepository.findById(chatId).map(chat -> {
 
-            if (chat.getParticipants().size() == 2){
+            if (chat.getParticipants().size() == 2) {
                 chat.setDeletedByUsers(List.of());
             }
 
@@ -428,10 +492,10 @@ public class ChatServiceImpl implements ChatService {
 
     private Chat findChat(User user1, User user2) {
         return this.chatRepository.findAll().stream()
-            .filter(chat -> chat.getParticipants().stream().anyMatch(user -> user.getUserName().equals(user1.getUserName()))
-                && chat.getParticipants().stream().anyMatch(user -> user.getUserName().equals(user2.getUserName())))
-            .findFirst()
-            .orElseGet(() -> this.createIndividualChat(List.of(user1.getUserName(), user2.getUserName())));
+                .filter(chat -> chat.getParticipants().stream().anyMatch(user -> user.getUserName().equals(user1.getUserName()))
+                        && chat.getParticipants().stream().anyMatch(user -> user.getUserName().equals(user2.getUserName())))
+                .findFirst()
+                .orElseGet(() -> this.createIndividualChat(List.of(user1.getUserName(), user2.getUserName())));
     }
 
 

@@ -35,4 +35,20 @@ public record GroupChatDto(String id,
                 ))
                 .toList();
     }
+
+
+    public static GroupChatDto from(Chat chat) {
+        return new GroupChatDto(
+                chat.getId(),
+                chat.getGroupName(),
+                chat.getDescription(),
+                chat.getParticipants(),
+                chat.getAdmins(),
+                chat.getMessages(),
+                chat.getCreationDate(),
+                chat.getMessageCount(),
+                chat.getDeletedByUsers(),
+                chat.getLastMessage()
+        );
+    }
 }

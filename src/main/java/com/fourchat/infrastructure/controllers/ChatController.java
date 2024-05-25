@@ -6,7 +6,7 @@ import com.fourchat.domain.ports.ChatService;
 import com.fourchat.domain.ports.UserService;
 import com.fourchat.infrastructure.controllers.dtos.GroupChatDto;
 import com.fourchat.infrastructure.controllers.dtos.MessageDto;
-import com.fourchat.infrastructure.controllers.dtos.NewGroupDto;
+import com.fourchat.infrastructure.controllers.dtos.GroupDto;
 import com.fourchat.infrastructure.controllers.dtos.SimpleTextMessage;
 import com.fourchat.infrastructure.controllers.util.ApiConstants;
 import lombok.AllArgsConstructor;
@@ -58,8 +58,6 @@ public class ChatController {
             throw new RuntimeException("User not found");
         }
 
-        // chatService.sendMessage(authentication.getName(), new TextMessage(user.get(), "Hola Alma", new Date()), "alma.barnichou");
-
         return chatService.getChatsFromUser(user.get().getId());
     }
 
@@ -98,7 +96,6 @@ public class ChatController {
 
 
 
-    // necesitamos el chatId, content , el messageId
     @PostMapping("/message/update")
     public boolean updateMessageFromChat(@RequestBody SimpleTextMessage simpleTextMessage, Authentication authentication ){
 
@@ -147,7 +144,7 @@ public class ChatController {
 
 
     @PostMapping("/group/create")
-    public Chat createGroupChat(@RequestBody NewGroupDto groupDto, Authentication authentication) {
+    public Chat createGroupChat(@RequestBody GroupDto groupDto, Authentication authentication) {
 
         Optional<User> user = userService.getUserByUserName(authentication.getName());
 
@@ -157,6 +154,20 @@ public class ChatController {
 
         return chatService.createGroupChat(groupDto.participantsIds(), groupDto.groupAdminIds(), groupDto.groupName(), groupDto.description());
     }
+
+
+    @PostMapping("/group/update")
+    public boolean updateGroupChat(@RequestBody GroupDto groupDto, @RequestParam String groupId,  Authentication authentication) {
+
+        Optional<User> user = userService.getUserByUserName(authentication.getName());
+
+        if (user.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+        return chatService.updateGroupChat(groupDto, user.get().getId(),  groupId);
+    }
+
 
 
 

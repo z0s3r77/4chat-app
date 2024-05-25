@@ -2,6 +2,7 @@ package com.fourchat.domain.ports;
 
 import com.fourchat.domain.models.Chat;
 import com.fourchat.domain.models.Message;
+import com.fourchat.infrastructure.controllers.dtos.GroupDto;
 
 import java.util.List;
 
@@ -27,18 +28,19 @@ public interface ChatService {
 
     Chat createGroupChat(List<String> participantsIds, List<String> groupAdminIds, String groupName, String description);
 
-    boolean updateGroupChatDescription(String chatId, String newDescription);
+    void updateGroupChatDescription(String chatId, String newDescription);
 
-    boolean updateGroupChatName(String chatId, String newGroupName);
+    void updateGroupChatName(String chatId, String newGroupName);
 
-    boolean removeParticipantFromGroupChat(String chatId, String adminId, String userId);
+    void removeParticipantFromGroupChat(String chatId, String adminId, String userId);
 
-    boolean makeParticipantAdmin(String chatId, String adminId, String userId);
+    void makeParticipantAdmin(String chatId, String adminId, String userId);
 
-    boolean removeParticipantFromAdmins(String chatId, String adminId, String adminIdToRemove);
+    void removeParticipantFromAdmins(String chatId, String adminId, String adminIdToRemove);
 
-    boolean addParticipantToGroupChat(String chatId, String adminId, String userId);
+    void addParticipantToGroupChat(String chatId, String adminId, String userId);
 
     List<Chat> getGroupChatsFromUser(String userId);
 
+    boolean updateGroupChat(GroupDto groupDto,String adminId, String groupId);
 }
