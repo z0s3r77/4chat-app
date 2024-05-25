@@ -1,29 +1,30 @@
 package com.fourchat.application;
 
 import com.fourchat.domain.models.*;
-import com.fourchat.domain.ports.ChatRepository;
-import com.fourchat.domain.ports.ChatService;
-import com.fourchat.domain.ports.NotificationService;
-import com.fourchat.domain.ports.UserService;
+import com.fourchat.domain.ports.*;
 import com.fourchat.infrastructure.controllers.dtos.GroupDto;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
-public class  ChatServiceImpl implements ChatService {
+public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
     private final UserService userService;
     private final NotificationService notificationService;
+    private final ChatBotService chatBotService;
     private final Logger logger = Logger.getLogger(ChatServiceImpl.class.getName());
 
 
@@ -33,10 +34,11 @@ public class  ChatServiceImpl implements ChatService {
     private static final String USER_DOES_NOT_EXIST = "User {0} does not exist";
 
 
-    public ChatServiceImpl(ChatRepository chatRepository, UserService userService, NotificationService notificationService) {
+    public ChatServiceImpl(ChatRepository chatRepository, UserService userService, NotificationService notificationService, ChatBotService chatBotService) {
         this.userService = userService;
         this.chatRepository = chatRepository;
         this.notificationService = notificationService;
+        this.chatBotService = chatBotService;
     }
 
     @Override
@@ -509,7 +511,7 @@ public class  ChatServiceImpl implements ChatService {
                     }
                 }
 
-               return true;
+                return true;
             }).orElse(null));
         } catch (Exception e) {
             this.logger.log(Level.SEVERE, "Error updating group chat", e);
@@ -553,8 +555,42 @@ public class  ChatServiceImpl implements ChatService {
         });
     }
 
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+
+
+
     @Override
     public boolean sendMessage(String chatId, Message message) {
+
+
+        executor.submit(() -> {
+
+            if (message.getContent().contains("@4chatbot resumen")) {
+
+                Chat chat = this.chatRepository.findById(chatId).orElseThrow(() -> new IllegalArgumentException("Chat not found"));
+
+                List<Message> lastMessages = chat.getMessages().stream()
+                        .sorted(Comparator.comparing(Message::getCreationDate).reversed())
+                        .limit(5)
+                        .toList();
+
+                String messageContent = lastMessages.stream()
+                        .map(Message::getContent)
+                        .collect(Collectors.joining(" "));
+
+
+                String response = this.chatBotService.getResumeFromChat(messageContent);
+
+                Message messageFromBot = new SystemTextMessage("4ChatBot : " + response, new Date());
+
+                chat.addMessage(messageFromBot);
+                chat.notifyParticipants(messageFromBot);
+                this.chatRepository.save(chat);
+            }
+
+        });
+
+
         return this.chatRepository.findById(chatId).map(chat -> {
 
             if (chat.getParticipants().size() == 2) {

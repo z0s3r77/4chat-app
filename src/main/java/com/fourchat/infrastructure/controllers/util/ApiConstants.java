@@ -6,5 +6,6 @@ public class ApiConstants {
     public static final String USERS_URL = API + "/users";
     public static final String KEYLOACK_URL = API + "/keycloak";
     public static final String CHAT_URL = API + "/chat";
+    public static final String CHAT_BOT_URL = API + "/chatbot";
 
 }

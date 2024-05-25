@@ -88,6 +88,12 @@
 			<artifactId>json</artifactId>
 			<version>20240303</version>
 		</dependency>
+
+		<dependency>
+			<groupId>io.github.stefanbratanov</groupId>
+			<artifactId>jvm-openai</artifactId>
+			<version>0.9.2</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>4chat-backend</finalName>

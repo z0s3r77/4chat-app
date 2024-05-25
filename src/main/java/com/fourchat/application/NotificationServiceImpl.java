@@ -41,6 +41,9 @@ public class NotificationServiceImpl implements NotificationService {
         if (message instanceof TextMessage){
 
             messagingTemplate.convertAndSend("/topic/chat/"+chat.getId(), messageDtoMapper.messageDtoMapper(message));
+        }else if (message instanceof SystemTextMessage){
+
+            messagingTemplate.convertAndSend("/topic/chat/"+chat.getId(), messageDtoMapper.messageDtoMapper(message));
         }
     }
 }
