@@ -127,8 +127,24 @@ public class BasicUser implements User {
             return;
         }
 
+        if (chat == null) {
+            System.out.println("Notificaion for user" + this.getUserName() + " received message from " + message.getSender().getUserName() + " : " + message.getContent() + "   | id :" + message.getId());
+            notificationService.sendNotification(this.getId(), message);
+            return;
+        }
+
+        if (chat instanceof GroupChat) {
+            System.out.println("Chat id : " + chat.getId() + " " + message.getSender().getUserName() + " : " + message.getContent() + "   | id :" + message.getId());
+            message.setReceiver(chat.getId());
+            notificationService.sendNotification(this.getId(), message);
+            notificationService.sendNotification(chat, message);
+            return;
+        }
+
+
         notificationService.sendNotification(this.getId(), message);
         notificationService.sendNotification(chat, message);
+
         System.out.println("Chat id : " + chat.getId() + " " + message.getSender().getUserName() + " : " + message.getContent() + "   | id :" + message.getId());
     }
 

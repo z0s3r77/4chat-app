@@ -73,6 +73,16 @@ public class SystemTextMessage implements Message {
     }
 
     @Override
+    public void setReceiver(String receiver) {
+        // System messages cannot have a receiver
+    }
+
+    @Override
+    public String getReceiver() {
+        return "";
+    }
+
+    @Override
     public String toString() {
         return "SimpleTextMessage{" +
                 "id='" + this.id + '\'' +

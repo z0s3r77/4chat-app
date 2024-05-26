@@ -1,6 +1,10 @@
 package com.fourchat.infrastructure.controllers;
 
 
+import com.fourchat.application.NotificationServiceImpl;
+import com.fourchat.domain.models.BasicUser;
+import com.fourchat.domain.models.Message;
+import com.fourchat.domain.models.SystemTextMessage;
 import com.fourchat.domain.models.User;
 import com.fourchat.domain.ports.UserService;
 import com.fourchat.infrastructure.controllers.dtos.UserDto;
@@ -14,10 +18,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.QueryParam;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -28,6 +29,8 @@ public class UserController {
 
     UserService userService;
     private final UserDtoMapper userDtoMapper;
+    private NotificationServiceImpl notificationServiceImpl;
+
 
     @GetMapping("/{userId}")
     public User getUserById(@PathVariable("userId") String userId) {
@@ -110,6 +113,16 @@ public class UserController {
         contact.addContact(user.getId());
         userService.save(contact);
 
+
+        Message messageForUser = new SystemTextMessage(user.getUserName() + " ha aceptado tú solicitud de contacto" , new Date());
+
+        if (contact instanceof BasicUser){
+            ((BasicUser) contact).setNotificationService(notificationServiceImpl);
+        }
+
+        contact.onMessageReceived(null, messageForUser);
+
+
         return ResponseEntity.ok(user);
     }
 
@@ -152,6 +165,15 @@ public class UserController {
         }
 
         contact.addPendingContactRequest(user.getId());
+
+        Message messageForUser = new SystemTextMessage(user.getUserName() + " te ha enviado una solicitud de contacto" , new Date());
+
+        if (contact instanceof BasicUser){
+            ((BasicUser) contact).setNotificationService(notificationServiceImpl);
+        }
+
+        contact.onMessageReceived(null, messageForUser);
+
         userService.save(contact);
 
         return ResponseEntity.ok(user);

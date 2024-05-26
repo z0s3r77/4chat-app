@@ -15,6 +15,7 @@ public class TextMessage implements Message{
     private User sender;
     private String content;
     private Date creationDate;
+    private String receiver;
     private boolean updated = false;
     private boolean deleted = false;
 
@@ -41,6 +42,16 @@ public class TextMessage implements Message{
 
     public void setSender(User sender) {
         this.sender = sender;
+    }
+
+    @Override
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
+    }
+
+    @Override
+    public String getReceiver() {
+        return receiver;
     }
 
     public void setCreationDate(Date creationDate) {

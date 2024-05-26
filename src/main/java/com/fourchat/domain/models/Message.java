@@ -16,4 +16,6 @@ public interface Message {
     public void setDeleted(boolean deleted);
     public boolean getDeleted();
     public void setSender(User sender);
+    public void setReceiver(String receiver);
+    public String getReceiver();
 }

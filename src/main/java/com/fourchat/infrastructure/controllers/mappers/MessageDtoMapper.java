@@ -26,6 +26,7 @@ public class MessageDtoMapper {
                     .creationDate(message.getCreationDate())
                     .updated(message.getUpdated())
                     .deleted(message.getDeleted())
+                    .receiver((message).getReceiver())
                     .build();
         }
 
@@ -39,6 +40,7 @@ public class MessageDtoMapper {
                     .creationDate(message.getCreationDate())
                     .updated(message.getUpdated())
                     .deleted(message.getDeleted())
+                    .receiver(null)
                     .build();
         }
 
